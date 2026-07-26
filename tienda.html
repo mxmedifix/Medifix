@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tienda — Medifix</title>
+<meta name="description" content="Catálogo de equipo médico Medifix organizado por especialidad: cardiología, ginecología, pediatría, fisioterapia, cirugía, diagnóstico y odontología.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ecg-progress" id="ecgProgress"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">Medifix<span class="brand-dot">.</span></a>
+    <nav class="nav-links">
+      <a href="tienda.html">Tienda</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <a href="index.html#cotizador" class="btn btn-copper btn-small">Cotizar equipo</a>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <p class="breadcrumb"><a href="index.html">Inicio</a> / Tienda</p>
+    <h1>Catálogo de equipo médico</h1>
+    <p>Organizado por especialidad, para que encuentres justo lo que tu área necesita. Cotiza directo por WhatsApp — sin cuenta ni carrito.</p>
+  </section>
+
+  <section class="section">
+    <div class="filter-row" id="filterRow">
+      <button class="filter-chip active" data-filter="todos">Todos</button>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <p style="grid-column:1/-1; color:#8A968F;">Cargando catálogo…</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="section-head" style="margin-bottom:0;">
+      <p class="eyebrow eyebrow-dark">¿No encuentras lo que buscas?</p>
+      <h2>Dinos qué necesitas y armamos una propuesta a la medida de tu clínica.</h2>
+      <div style="margin-top:28px;">
+        <a href="index.html#cotizador" class="btn btn-copper">Ir al cotizador</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <p class="brand">Medifix<span class="brand-dot">.</span></p>
+      <p>Más que equipos, estrategias para tu rentabilidad médica.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <a href="tienda.html">Todos los productos</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="privacidad.html">Aviso de privacidad</a>
+      <a href="admin.html">Acceso administrador</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <a href="mailto:contacto@medifix.mx">contacto@medifix.mx</a>
+      <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener">Facebook</a>
+    </div>
+  </div>
+  <p class="footer-legal">© 2026 Medifix. Todos los derechos reservados.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
