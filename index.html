@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medifix — Equipos médicos y capacitación clínica</title>
+<meta name="description" content="Más que equipos: estrategias para la rentabilidad de tu clínica. Equipamiento médico, cursos de capacitación y consultoría especializada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ecg-progress" id="ecgProgress"></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">Medifix<span class="brand-dot">.</span></a>
+    <nav class="nav-links">
+      <a href="tienda.html">Tienda</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="#cotizador" class="btn btn-copper btn-small">Cotizar equipo</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow" data-ck="home.heroEyebrow">Confianza y excelencia clínica</p>
+      <h1 class="hero-title"><span data-ck="home.heroTitleLine1">Más que equipos,</span><br><em data-ck="home.heroTitleLine2">estrategias para tu rentabilidad médica.</em></h1>
+      <p class="hero-sub" data-ck="home.heroSub">Equipamos clínicas y hospitales con tecnología confiable, y formamos al personal que la opera. Donde más de 200 instituciones de salud en México ya mejoraron sus resultados.</p>
+      <div class="hero-actions">
+        <a href="#catalogo" class="btn btn-copper">Explorar catálogo</a>
+        <a href="#cotizador" class="btn btn-outline">Solicitar cotización</a>
+      </div>
+    </div>
+    <svg class="hero-ecg" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+      <path id="ecgPath" d="M0,70 L220,70 L250,70 L268,20 L286,120 L304,40 L322,70 L360,70 L1200,70"
+        fill="none" stroke="#3FA796" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="section">
+    <div class="section-head reveal">
+      <p class="eyebrow eyebrow-dark" data-ck="home.servicesEyebrow">Lo que ofrecemos</p>
+      <h2 data-ck="home.servicesHeading">Cuatro formas de fortalecer tu operación clínica</h2>
+    </div>
+    <div class="services-grid services-grid-4 reveal">
+      <article class="service-card" data-preview="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=70" data-preview-tag="Ver catálogo" data-href="tienda.html">
+        <span class="service-mono">EQ · 01</span>
+        <h3 data-ck="home.service1Title">Equipamiento médico</h3>
+        <p data-ck="home.service1Desc">Selección de equipos e insumos de alta calidad, con garantía y soporte técnico dedicado, elegidos según tu especialidad.</p>
+        <a href="tienda.html" class="service-link">Ver catálogo →</a>
+      </article>
+      <article class="service-card service-card-featured" data-preview="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=700&q=70" data-preview-tag="Ver calendario" data-href="cursos.html">
+        <span class="service-mono">CAP · 02</span>
+        <h3 data-ck="home.service2Title">Cursos de capacitación</h3>
+        <p data-ck="home.service2Desc">Programas prácticos para que tu equipo domine cada herramienta y procedimiento, con certificación.</p>
+        <a href="cursos.html" class="service-link">Ver calendario →</a>
+      </article>
+      <article class="service-card" data-preview="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=700&q=70" data-preview-tag="Conocer más" data-href="telemedicina.html">
+        <span class="service-mono">TM · 03</span>
+        <h3 data-ck="home.service3Title">Telemedicina</h3>
+        <p data-ck="home.service3Desc">Consulta y seguimiento clínico a distancia, sin perder el control de tu equipo médico ni de tu paciente.</p>
+        <a href="telemedicina.html" class="service-link">Conocer más →</a>
+      </article>
+      <article class="service-card" data-preview="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=700&q=70" data-preview-tag="Agendar diagnóstico" data-href="contacto.html">
+        <span class="service-mono">CON · 04</span>
+        <h3 data-ck="home.service4Title">Consultoría de rentabilidad</h3>
+        <p data-ck="home.service4Desc">Diagnóstico de tu operación actual y un plan concreto para mejorar márgenes y experiencia del paciente.</p>
+        <a href="contacto.html" class="service-link">Agendar diagnóstico →</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- CATALOGO -->
+  <section id="catalogo" class="section section-alt">
+    <div class="section-head reveal">
+      <p class="eyebrow eyebrow-dark" data-ck="home.catalogEyebrow">Catálogo</p>
+      <h2 data-ck="home.catalogHeading">Equipo listo para tu especialidad</h2>
+      <p class="section-sub" data-ck="home.catalogSub">Organizado por especialidad médica para que encuentres justo lo que tu área necesita. El catálogo completo, precios y disponibilidad están en la tienda.</p>
+    </div>
+    <div class="catalog-grid reveal">
+      <article class="catalog-card" data-preview="https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=700&q=70" data-preview-tag="Ver tienda" data-href="tienda.html">
+        <div class="catalog-img" style="background-image:url('https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=800&q=70')"></div>
+        <h3>Diagnóstico e imagenología</h3>
+        <p class="catalog-spec">Monitores, ultrasonido, equipo portátil</p>
+      </article>
+      <article class="catalog-card" data-preview="https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=700&q=70" data-preview-tag="Ver tienda" data-href="tienda.html">
+        <div class="catalog-img" style="background-image:url('https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=70')"></div>
+        <h3>Quirófano y esterilización</h3>
+        <p class="catalog-spec">Autoclaves, mesas, instrumental</p>
+      </article>
+      <article class="catalog-card" data-preview="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=700&q=70" data-preview-tag="Ver tienda" data-href="tienda.html">
+        <div class="catalog-img" style="background-image:url('https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=800&q=70')"></div>
+        <h3>Consultorio y rehabilitación</h3>
+        <p class="catalog-spec">Camillas, fisioterapia, mobiliario clínico</p>
+      </article>
+    </div>
+    <div class="catalog-cta">
+      <a href="tienda.html" class="btn btn-outline-dark">Ver tienda completa</a>
+    </div>
+  </section>
+
+  <!-- CURSOS -->
+  <section id="cursos" class="section">
+    <div class="section-head reveal">
+      <p class="eyebrow eyebrow-dark" data-ck="home.coursesEyebrow">Capacitación</p>
+      <h2 data-ck="home.coursesHeading">Próximas sesiones</h2>
+      <p class="section-sub" data-ck="home.coursesSub">Cupo limitado por grupo para garantizar práctica real con el equipo. Elige una fecha y aparta tu lugar por WhatsApp.</p>
+    </div>
+    <div class="courses-list reveal" id="coursesList">
+      <article class="course-row">
+        <div class="course-date">
+          <span class="course-day">14</span>
+          <span class="course-month">Ago</span>
+        </div>
+        <div class="course-info">
+          <h3>Manejo y mantenimiento de equipo de diagnóstico</h3>
+          <p>Presencial · CDMX · 6 horas · Certificado de participación</p>
+        </div>
+        <button class="btn btn-small btn-outline-dark course-book" data-course="Manejo y mantenimiento de equipo de diagnóstico — 14 Ago">Apartar lugar</button>
+      </article>
+      <article class="course-row">
+        <div class="course-date">
+          <span class="course-day">28</span>
+          <span class="course-month">Ago</span>
+        </div>
+        <div class="course-info">
+          <h3>Protocolos de esterilización y bioseguridad</h3>
+          <p>En línea + práctica en sede · 4 horas</p>
+        </div>
+        <button class="btn btn-small btn-outline-dark course-book" data-course="Protocolos de esterilización y bioseguridad — 28 Ago">Apartar lugar</button>
+      </article>
+      <article class="course-row">
+        <div class="course-date">
+          <span class="course-day">11</span>
+          <span class="course-month">Sep</span>
+        </div>
+        <div class="course-info">
+          <h3>Rentabilidad de consultorio: uso eficiente de equipo</h3>
+          <p>En línea · 3 horas · Para administradores de clínica</p>
+        </div>
+        <button class="btn btn-small btn-outline-dark course-book" data-course="Rentabilidad de consultorio — 11 Sep">Apartar lugar</button>
+      </article>
+    </div>
+    <div class="catalog-cta">
+      <a href="cursos.html" class="service-link">Ver todos los cursos →</a>
+    </div>
+  </section>
+
+  <!-- INSTITUCIONES -->
+  <section class="section section-dark">
+    <div class="section-head section-head-light reveal">
+      <p class="eyebrow" data-ck="home.institEyebrow">Presencia clínica</p>
+      <h2 data-ck="home.institHeading">+200 instituciones de salud confían en nosotros</h2>
+    </div>
+    <div class="stats-row reveal">
+      <div class="stat"><span class="stat-num" data-ck="home.stat1Num">200+</span><span class="stat-label" data-ck="home.stat1Label">clínicas atendidas</span></div>
+      <div class="stat"><span class="stat-num" data-ck="home.stat2Num">14</span><span class="stat-label" data-ck="home.stat2Label">años de operación</span></div>
+      <div class="stat"><span class="stat-num" data-ck="home.stat3Num">98%</span><span class="stat-label" data-ck="home.stat3Label">soporte resuelto en 24h</span></div>
+      <div class="stat"><span class="stat-num" data-ck="home.stat4Num">30</span><span class="stat-label" data-ck="home.stat4Label">días de garantía de devolución</span></div>
+    </div>
+  </section>
+
+  <!-- COTIZADOR -->
+  <section id="cotizador" class="section section-alt">
+    <div class="quote-wrap">
+      <div class="quote-copy reveal">
+        <p class="eyebrow eyebrow-dark" data-ck="home.quoteEyebrow">Cotizador rápido</p>
+        <h2 data-ck="home.quoteHeading">Cuéntanos qué necesita tu clínica</h2>
+        <p class="section-sub" data-ck="home.quoteSub">Completa el formulario y te contactamos en menos de 24 horas hábiles con una propuesta. Sin compromiso.</p>
+        <ul class="quote-points">
+          <li>Respuesta personalizada, no genérica</li>
+          <li>Opciones dentro y fuera de tu presupuesto</li>
+          <li>Podemos incluir capacitación en la misma propuesta</li>
+        </ul>
+      </div>
+      <form class="quote-form reveal" id="quoteForm">
+        <label>Nombre completo
+          <input type="text" name="nombre" required placeholder="Dra. Ana Martínez">
+        </label>
+        <label>Clínica o institución
+          <input type="text" name="clinica" placeholder="Clínica San Rafael">
+        </label>
+        <label>Correo o teléfono
+          <input type="text" name="contacto" required placeholder="ana@clinica.com o 55 1234 5678">
+        </label>
+        <label>¿Qué necesitas?
+          <select name="interes">
+            <option>Equipo médico</option>
+            <option>Curso de capacitación</option>
+            <option>Consultoría de rentabilidad</option>
+            <option>Aún no lo sé, quiero asesoría</option>
+          </select>
+        </label>
+        <label>Cuéntanos más
+          <textarea name="detalle" rows="3" placeholder="Ej. Buscamos equipo de ultrasonido para consultorio de 2 salas"></textarea>
+        </label>
+        <button type="submit" class="btn btn-copper btn-full">Enviar por WhatsApp</button>
+        <p class="quote-note">También puedes escribirnos directo a <a href="mailto:contacto@medifix.mx" data-ck="global.email" data-ck-attr="href">contacto@medifix.mx</a></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contacto" class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <p class="brand">Medifix<span class="brand-dot">.</span></p>
+      <p data-ck="global.footerTagline">Más que equipos, estrategias para tu rentabilidad médica.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <a href="tienda.html">Todos los productos</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="privacidad.html">Aviso de privacidad</a>
+      <a href="admin.html">Acceso administrador</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <a href="mailto:contacto@medifix.mx" data-ck="global.email" data-ck-attr="href">contacto@medifix.mx</a>
+      <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener" data-ck="global.instagramUrl" data-ck-attr="href">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener" data-ck="global.facebookUrl" data-ck-attr="href">Facebook</a>
+    </div>
+  </div>
+  <p class="footer-legal">© 2026 Medifix. Todos los derechos reservados.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

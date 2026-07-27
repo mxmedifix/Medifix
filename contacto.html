@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contacto — Medifix</title>
+<meta name="description" content="Contacta a Medifix para cotizar equipo médico, agendar capacitación o resolver dudas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ecg-progress" id="ecgProgress"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">Medifix<span class="brand-dot">.</span></a>
+    <nav class="nav-links">
+      <a href="tienda.html">Tienda</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="index.html#cotizador" class="btn btn-copper btn-small">Cotizar equipo</a>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <p class="breadcrumb"><a href="index.html">Inicio</a> / Contacto</p>
+    <h1 data-ck="contacto.heroTitle">Hablemos de tu clínica</h1>
+    <p data-ck="contacto.heroSub">Respondemos en menos de 24 horas hábiles. Sin compromiso.</p>
+  </section>
+
+  <section class="section">
+    <div class="contact-wrap">
+      <div class="contact-info reveal">
+        <div class="contact-item">
+          <h4>WhatsApp directo</h4>
+          <p><a href="https://wa.me/528718336666" target="_blank" rel="noopener" data-wa-link data-ck="global.phoneDisplay">+52 871 833 6666</a></p>
+        </div>
+        <div class="contact-item">
+          <h4>Correo</h4>
+          <p><a href="mailto:contacto@medifix.mx" data-ck="global.email" data-ck-attr="href">contacto@medifix.mx</a></p>
+        </div>
+        <div class="contact-item">
+          <h4>Horario de atención</h4>
+          <p data-ck="contacto.horario">Lunes a viernes, 9:00 a 18:00 (hora del centro de México)</p>
+        </div>
+        <div class="contact-item">
+          <h4>Redes</h4>
+          <p>
+            <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener" data-ck="global.instagramUrl" data-ck-attr="href">Instagram</a> ·
+            <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener" data-ck="global.facebookUrl" data-ck-attr="href">Facebook</a>
+          </p>
+        </div>
+        <div class="contact-map" data-ck="contacto.coverage">Zona de cobertura: toda la República Mexicana</div>
+      </div>
+
+      <form class="quote-form" id="contactForm">
+        <label>Nombre completo
+          <input type="text" name="nombre" required placeholder="Dra. Ana Martínez">
+        </label>
+        <label>Clínica o institución
+          <input type="text" name="clinica" placeholder="Clínica San Rafael">
+        </label>
+        <label>Correo o teléfono
+          <input type="text" name="contacto" required placeholder="ana@clinica.com o 55 1234 5678">
+        </label>
+        <label>Motivo de contacto
+          <select name="motivo">
+            <option>Cotización de equipo</option>
+            <option>Información de cursos</option>
+            <option>Consultoría de rentabilidad</option>
+            <option>Soporte técnico</option>
+            <option>Otro</option>
+          </select>
+        </label>
+        <label>Mensaje
+          <textarea name="mensaje" rows="4" placeholder="Cuéntanos en qué te ayudamos"></textarea>
+        </label>
+        <button type="submit" class="btn btn-copper btn-full">Enviar por WhatsApp</button>
+        <p class="quote-note">También puedes escribirnos directo a <a href="mailto:contacto@medifix.mx">contacto@medifix.mx</a></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <p class="brand">Medifix<span class="brand-dot">.</span></p>
+      <p data-ck="global.footerTagline">Más que equipos, estrategias para tu rentabilidad médica.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <a href="tienda.html">Todos los productos</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="privacidad.html">Aviso de privacidad</a>
+      <a href="admin.html">Acceso administrador</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <a href="mailto:contacto@medifix.mx" data-ck="global.email" data-ck-attr="href">contacto@medifix.mx</a>
+      <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener" data-ck="global.instagramUrl" data-ck-attr="href">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener" data-ck="global.facebookUrl" data-ck-attr="href">Facebook</a>
+    </div>
+  </div>
+  <p class="footer-legal">© 2026 Medifix. Todos los derechos reservados.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

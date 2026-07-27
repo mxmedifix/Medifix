@@ -1,0 +1,72 @@
+{
+  "global": {
+    "footerTagline": "Más que equipos, estrategias para tu rentabilidad médica.",
+    "email": "contacto@medifix.mx",
+    "instagramUrl": "https://www.instagram.com/mxmedifix",
+    "facebookUrl": "https://www.facebook.com/profile.php?id=61575132607438",
+    "phoneDisplay": "+52 871 833 6666",
+    "whatsappNumber": "528718336666"
+  },
+  "home": {
+    "heroEyebrow": "Confianza y excelencia clínica",
+    "heroTitleLine1": "Más que equipos,",
+    "heroTitleLine2": "estrategias para tu rentabilidad médica.",
+    "heroSub": "Equipamos clínicas y hospitales con tecnología confiable, y formamos al personal que la opera. Donde más de 200 instituciones de salud en México ya mejoraron sus resultados.",
+    "servicesEyebrow": "Lo que ofrecemos",
+    "servicesHeading": "Cuatro formas de fortalecer tu operación clínica",
+    "service1Title": "Equipamiento médico",
+    "service1Desc": "Selección de equipos e insumos de alta calidad, con garantía y soporte técnico dedicado, elegidos según tu especialidad.",
+    "service2Title": "Cursos de capacitación",
+    "service2Desc": "Programas prácticos para que tu equipo domine cada herramienta y procedimiento, con certificación.",
+    "service3Title": "Telemedicina",
+    "service3Desc": "Consulta y seguimiento clínico a distancia, sin perder el control de tu equipo médico ni de tu paciente.",
+    "service4Title": "Consultoría de rentabilidad",
+    "service4Desc": "Diagnóstico de tu operación actual y un plan concreto para mejorar márgenes y experiencia del paciente.",
+    "catalogEyebrow": "Catálogo",
+    "catalogHeading": "Equipo listo para tu especialidad",
+    "catalogSub": "Organizado por especialidad médica para que encuentres justo lo que tu área necesita. El catálogo completo, precios y disponibilidad están en la tienda.",
+    "coursesEyebrow": "Capacitación",
+    "coursesHeading": "Próximas sesiones",
+    "coursesSub": "Cupo limitado por grupo para garantizar práctica real con el equipo. Elige una fecha y aparta tu lugar por WhatsApp.",
+    "institEyebrow": "Presencia clínica",
+    "institHeading": "+200 instituciones de salud confían en nosotros",
+    "stat1Num": "200+", "stat1Label": "clínicas atendidas",
+    "stat2Num": "14", "stat2Label": "años de operación",
+    "stat3Num": "98%", "stat3Label": "soporte resuelto en 24h",
+    "stat4Num": "30", "stat4Label": "días de garantía de devolución",
+    "quoteEyebrow": "Cotizador rápido",
+    "quoteHeading": "Cuéntanos qué necesita tu clínica",
+    "quoteSub": "Completa el formulario y te contactamos en menos de 24 horas hábiles con una propuesta. Sin compromiso."
+  },
+  "nosotros": {
+    "heroTitle": "Confianza y excelencia clínica, desde 2012",
+    "heroSub": "Acompañamos a clínicas y hospitales mexicanos con equipo, conocimiento y estrategia de rentabilidad.",
+    "mision": "Proveer equipamiento médico de alta calidad y programas de capacitación que aseguren que cada clínica opere con confiabilidad clínica y rentabilidad sostenida.",
+    "vision": "Ser el socio estratégico de referencia para clínicas independientes en México, integrando equipo, formación y consultoría en una sola relación de largo plazo.",
+    "valor1Title": "Confiabilidad", "valor1Desc": "Equipo con garantía real y soporte técnico que responde a tiempo.",
+    "valor2Title": "Excelencia clínica", "valor2Desc": "Cada recomendación parte del procedimiento, no solo del catálogo.",
+    "valor3Title": "Transparencia", "valor3Desc": "Cotizaciones claras, sin letras chiquitas ni costos ocultos.",
+    "valor4Title": "Acompañamiento", "valor4Desc": "La relación sigue después de la venta, con capacitación y soporte.",
+    "institHeading": "Instituciones donde hemos tenido presencia",
+    "institSub": "Una muestra de las clínicas y hospitales que han confiado en Medifix para equipar y capacitar a su personal."
+  },
+  "telemedicina": {
+    "heroTitle": "Atención clínica a distancia, sin perder el control",
+    "heroSub": "Videoconsulta segura, seguimiento post-venta de equipo y segunda opinión especializada — para ti y para tus pacientes.",
+    "step1Title": "Agenda tu sesión", "step1Desc": "Elige fecha y motivo de consulta — seguimiento clínico, soporte técnico de equipo o segunda opinión especializada.",
+    "step2Title": "Videollamada segura", "step2Desc": "Conexión directa con un especialista Medifix, con posibilidad de compartir estudios, imágenes y expediente clínico.",
+    "step3Title": "Seguimiento digital", "step3Desc": "Recibes notas de la sesión y siguientes pasos por correo o WhatsApp, listos para tu expediente.",
+    "value1Title": "Seguimiento post-venta", "value1Desc": "Dudas sobre configuración o uso de un equipo que ya compraste, resueltas sin esperar una visita.",
+    "value2Title": "Segunda opinión", "value2Desc": "Consulta a un especialista antes de decidir sobre un caso clínico complejo.",
+    "value3Title": "Zonas alejadas", "value3Desc": "Clínicas fuera de las ciudades donde tenemos sede, sin tiempo de traslado.",
+    "value4Title": "Capacitación remota", "value4Desc": "Refuerzo puntual para tu equipo entre una sesión presencial y otra.",
+    "ctaHeading": "¿Cuándo te viene bien tu primera sesión?",
+    "ctaSub": "Escríbenos el motivo de tu consulta y te proponemos horarios disponibles en menos de 24 horas."
+  },
+  "contacto": {
+    "heroTitle": "Hablemos de tu clínica",
+    "heroSub": "Respondemos en menos de 24 horas hábiles. Sin compromiso.",
+    "horario": "Lunes a viernes, 9:00 a 18:00 (hora del centro de México)",
+    "coverage": "Zona de cobertura: toda la República Mexicana"
+  }
+}
