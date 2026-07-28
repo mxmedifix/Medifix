@@ -1,0 +1,72 @@
+{
+  "specialties": [
+    { "id": "general", "label": "Medicina General" },
+    { "id": "psicologia", "label": "Psicología" },
+    { "id": "nutricion", "label": "Nutrición" },
+    { "id": "ginecologia", "label": "Ginecología" },
+    { "id": "pediatria", "label": "Pediatría" },
+    { "id": "dermatologia", "label": "Dermatología" }
+  ],
+  "specialists": [
+    {
+      "id": "s001",
+      "name": "Dra. Ejemplo — reemplázame",
+      "specialtyId": "general",
+      "rating": "4.9",
+      "reviewCount": "132",
+      "nextAvailable": "Hoy, 5:30 PM",
+      "bio": "Medicina general y seguimiento de padecimientos crónicos.",
+      "photo": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=70"
+    },
+    {
+      "id": "s002",
+      "name": "Dr. Ejemplo — reemplázame",
+      "specialtyId": "psicologia",
+      "rating": "5.0",
+      "reviewCount": "88",
+      "nextAvailable": "Mañana, 10:00 AM",
+      "bio": "Terapia individual, ansiedad y manejo del estrés.",
+      "photo": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=70"
+    },
+    {
+      "id": "s003",
+      "name": "Lic. Ejemplo — reemplázame",
+      "specialtyId": "nutricion",
+      "rating": "4.8",
+      "reviewCount": "64",
+      "nextAvailable": "Hoy, 7:00 PM",
+      "bio": "Planes de alimentación personalizados y seguimiento de peso.",
+      "photo": "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=400&q=70"
+    },
+    {
+      "id": "s004",
+      "name": "Dra. Ejemplo — reemplázame",
+      "specialtyId": "ginecologia",
+      "rating": "4.9",
+      "reviewCount": "146",
+      "nextAvailable": "Jueves, 12:00 PM",
+      "bio": "Salud femenina, control prenatal y planificación familiar.",
+      "photo": "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=70"
+    },
+    {
+      "id": "s005",
+      "name": "Dr. Ejemplo — reemplázame",
+      "specialtyId": "pediatria",
+      "rating": "4.9",
+      "reviewCount": "201",
+      "nextAvailable": "Hoy, 6:15 PM",
+      "bio": "Consultas pediátricas y seguimiento de desarrollo infantil.",
+      "photo": "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&w=400&q=70"
+    },
+    {
+      "id": "s006",
+      "name": "Dra. Ejemplo — reemplázame",
+      "specialtyId": "dermatologia",
+      "rating": "4.7",
+      "reviewCount": "97",
+      "nextAvailable": "Viernes, 4:00 PM",
+      "bio": "Diagnóstico de piel por videoconsulta y seguimiento de tratamiento.",
+      "photo": "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?auto=format&fit=crop&w=400&q=70"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telemedicina — Medifix</title>
+<meta name="description" content="Encuentra un especialista y agenda tu videoconsulta con Medifix Telemedicina — por especialidad, con calificación y disponibilidad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ecg-progress" id="ecgProgress"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">Medifix<span class="brand-dot">.</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
+      <a href="tienda.html">Tienda</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <a href="index.html#cotizador" class="btn btn-copper btn-small">Cotizar equipo</a>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <p class="breadcrumb"><a href="index.html">Inicio</a> / Telemedicina</p>
+    <h1 data-ck="telemedicina.heroTitle">Encuentra tu especialista y agenda tu consulta en línea</h1>
+    <p data-ck="telemedicina.heroSub">Videoconsulta segura, con calificación real de pacientes y disponibilidad al momento.</p>
+
+    <form class="specialist-search" id="specialistSearchForm">
+      <label>Especialidad
+        <select name="specialty" id="searchSpecialtySelect">
+          <option value="todos">Todas las especialidades</option>
+          <option value="general">Medicina General</option>
+          <option value="psicologia">Psicología</option>
+          <option value="nutricion">Nutrición</option>
+          <option value="ginecologia">Ginecología</option>
+          <option value="pediatria">Pediatría</option>
+          <option value="dermatologia">Dermatología</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-copper">Buscar especialista</button>
+    </form>
+
+    <div class="specialty-chips-static">
+      <a href="#directorio" data-jump="psicologia">Psicología</a>
+      <a href="#directorio" data-jump="pediatria">Pediatría</a>
+      <a href="#directorio" data-jump="ginecologia">Ginecología</a>
+      <a href="#directorio" data-jump="nutricion">Nutrición</a>
+      <a href="#directorio" data-jump="dermatologia">Dermatología</a>
+    </div>
+  </section>
+
+  <!-- VALORES DEL SERVICIO -->
+  <section class="section">
+    <div class="services-grid reveal">
+      <article class="service-card">
+        <span class="service-mono">01</span>
+        <h3 data-ck="telemedicina.value1Title">Especialistas verificados</h3>
+        <p data-ck="telemedicina.value1Desc">Cada perfil pasa por validación de cédula profesional antes de aparecer en el directorio.</p>
+      </article>
+      <article class="service-card service-card-featured">
+        <span class="service-mono">02</span>
+        <h3 data-ck="telemedicina.value2Title">Agenda en minutos</h3>
+        <p data-ck="telemedicina.value2Desc">Elige especialidad, revisa disponibilidad y confirma tu cita sin llamadas.</p>
+      </article>
+      <article class="service-card">
+        <span class="service-mono">03</span>
+        <h3 data-ck="telemedicina.value3Title">Confirmación inmediata</h3>
+        <p data-ck="telemedicina.value3Desc">Recibes la confirmación y el enlace de videollamada directo por WhatsApp.</p>
+      </article>
+      <article class="service-card">
+        <span class="service-mono">04</span>
+        <h3 data-ck="telemedicina.value4Title">Sin costos ocultos</h3>
+        <p data-ck="telemedicina.value4Desc">El precio de la consulta se confirma antes de agendar — nada de sorpresas.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- DIRECTORIO DE ESPECIALISTAS -->
+  <section id="directorio" class="section section-alt">
+    <div class="section-head reveal">
+      <p class="eyebrow eyebrow-dark">Directorio</p>
+      <h2>Especialistas disponibles para videoconsulta</h2>
+      <p class="section-sub">Perfiles de ejemplo — reemplázalos por tu propio equipo desde el panel de administrador.</p>
+    </div>
+
+    <div class="filter-row reveal" id="specialistFilterRow" data-target="specialistGrid" data-attr="data-specialty">
+      <button class="filter-chip active" data-filter="todos">Todos</button>
+    </div>
+
+    <div class="specialist-grid reveal" id="specialistGrid">
+      <p style="grid-column:1/-1; color:#8A968F;">Cargando directorio…</p>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="section">
+    <div class="section-head reveal">
+      <p class="eyebrow eyebrow-dark">Opiniones</p>
+      <h2>Lo que dicen los pacientes</h2>
+      <p class="section-sub">Ejemplos de cómo se verán las opiniones reales una vez que actives el servicio.</p>
+    </div>
+    <div class="values-grid reveal">
+      <div class="value-card">
+        <h3>★★★★★</h3>
+        <p>"Agendé en la noche y tuve la consulta al día siguiente. Muy claro todo el proceso." — Paciente de ejemplo</p>
+      </div>
+      <div class="value-card">
+        <h3>★★★★★</h3>
+        <p>"El especialista fue puntual y resolvió mis dudas sin necesidad de ir a la clínica." — Paciente de ejemplo</p>
+      </div>
+      <div class="value-card">
+        <h3>★★★★☆</h3>
+        <p>"Muy cómodo para dar seguimiento sin faltar al trabajo." — Paciente de ejemplo</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="section-head section-head-light reveal" style="margin-bottom:0;">
+      <p class="eyebrow">¿Eres especialista de la salud?</p>
+      <h2 data-ck="telemedicina.ctaHeading">Súmate al directorio de Medifix Telemedicina</h2>
+      <p class="section-sub" data-ck="telemedicina.ctaSub">Da consulta en línea a través de nuestra plataforma y llega a más pacientes, sin costo de entrada.</p>
+      <div style="margin-top:28px;">
+        <a href="https://wa.me/528718336666?text=Hola%20Medifix%2C%20soy%20personal%20de%20salud%20y%20quiero%20sumarme%20al%20directorio%20de%20Telemedicina" class="btn btn-outline" target="_blank" rel="noopener" data-wa-link>Escribir por WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <p class="brand">Medifix<span class="brand-dot">.</span></p>
+      <p data-ck="global.footerTagline">Más que equipos, estrategias para tu rentabilidad médica.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <a href="tienda.html">Todos los productos</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="privacidad.html">Aviso de privacidad</a>
+      <a href="admin.html">Acceso administrador</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <a href="mailto:contacto@medifix.mx" data-ck="global.email" data-ck-attr="href">contacto@medifix.mx</a>
+      <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener" data-ck="global.instagramUrl" data-ck-attr="href">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener" data-ck="global.facebookUrl" data-ck-attr="href">Facebook</a>
+    </div>
+  </div>
+  <p class="footer-legal">© 2026 Medifix. Todos los derechos reservados.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
