@@ -1,25 +1,131 @@
+bash
+
+cat > /home/claude/medifix-site/telemedicina.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Telemedicina — Medifix</title>
-<meta name="description" content="Encuentra un especialista y agenda tu videoconsulta con Medifix Telemedicina — por especialidad, con calificación y disponibilidad.">
+<meta name="description" content="Directorio de especialistas médicos verificados. Agenda cita presencial o videollamada.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>
+/* ── HERO ── */
+.th{background:linear-gradient(160deg,#0B3049 0%,#0F3E5C 100%);color:#fff;padding:90px 28px 70px;position:relative;overflow:hidden;}
+.th::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.th-inner{max-width:860px;margin:0 auto;text-align:center;position:relative;z-index:1;}
+.th h1{font-family:'Newsreader',serif;font-size:clamp(2rem,5vw,3.2rem);margin:14px 0 16px;line-height:1.1;}
+.th-sub{color:rgba(255,255,255,.78);font-size:1.05rem;max-width:500px;margin:0 auto 36px;}
+/* Buscador */
+.tsb{display:flex;gap:12px;background:#fff;padding:12px;border-radius:4px;box-shadow:0 24px 48px -16px rgba(0,0,0,.4);flex-wrap:wrap;max-width:640px;margin:0 auto;}
+.tsb select,.tsb input{flex:1;min-width:160px;border:1px solid var(--line);border-radius:2px;padding:11px 12px;font-family:var(--font-body);font-size:.92rem;background:var(--bg);color:var(--ink);outline:none;}
+.tsb select:focus,.tsb input:focus{outline:2px solid var(--teal);}
+/* Chips */
+.spec-chips{background:var(--navy);padding:12px 28px;}
+.spec-chips-inner{max-width:1180px;margin:0 auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.spec-chip{font-family:var(--font-mono);font-size:.76rem;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:20px;cursor:pointer;background:transparent;transition:all .2s;}
+.spec-chip:hover,.spec-chip.active{color:#fff;border-color:#3FA796;background:rgba(63,167,150,.15);}
+/* Trust bar */
+.trust-bar{background:var(--bg-alt);border-bottom:1px solid var(--line);padding:16px 28px;}
+.trust-bar-inner{max-width:1180px;margin:0 auto;display:flex;gap:28px;justify-content:center;flex-wrap:wrap;}
+.trust-item{display:flex;align-items:center;gap:10px;font-size:.86rem;color:#3A4A50;}
+.trust-icon{font-size:1.2rem;}
+/* Directorio */
+.dir-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:24px;}
+.dir-filters{display:flex;gap:10px;flex-wrap:wrap;}
+.dir-select{font-family:var(--font-body);font-size:.85rem;padding:8px 12px;border:1px solid var(--line);border-radius:2px;background:#fff;color:var(--ink);}
+/* Grid */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.tcard{background:#fff;border:1px solid var(--line);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s ease,box-shadow .3s ease;}
+.tcard:hover{transform:translateY(-4px);box-shadow:0 20px 40px -18px rgba(11,48,73,.2);}
+.tcard.destacado{border-color:#C0793A;border-width:2px;}
+.tcard-top{padding:20px 18px 0;position:relative;}
+.tcard-badge{position:absolute;top:12px;right:12px;background:#C0793A;color:#fff;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:2px;}
+.tcard-badge-cli{position:absolute;top:12px;left:12px;background:#0E6E76;color:#fff;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:2px;}
+.tavatar{width:68px;height:68px;border-radius:50%;background:var(--bg-alt);border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--teal);margin-bottom:12px;overflow:hidden;}
+.tavatar img{width:100%;height:100%;object-fit:cover;}
+.tcard-body{padding:0 18px 18px;flex:1;display:flex;flex-direction:column;gap:5px;}
+.tcard-spec{font-family:var(--font-mono);font-size:.7rem;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;}
+.tcard-body h3{font-size:1.02rem;margin:2px 0;}
+.tcard-desc{font-size:.84rem;color:#5C6B70;flex:1;line-height:1.5;}
+.tcard-meta{display:flex;flex-direction:column;gap:4px;margin:8px 0;font-size:.8rem;}
+.tcard-cost{font-family:var(--font-mono);font-size:.8rem;color:#A6632B;font-weight:600;}
+.tcard-avail{font-size:.76rem;color:#5C6B70;font-family:var(--font-mono);}
+.tcard-actions{display:flex;gap:8px;padding:0 18px 18px;}
+.tcard-actions .btn{flex:1;padding:10px 10px;font-size:.8rem;}
+.tdir-empty{text-align:center;padding:60px 28px;color:#8A968F;grid-column:1/-1;}
+.tdir-loading{text-align:center;padding:60px;color:#8A968F;grid-column:1/-1;}
+/* REGISTRO */
+.reg-section{background:var(--bg-alt);padding:80px 28px;}
+.reg-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:start;}
+.reg-copy h2{font-family:'Newsreader',serif;font-size:clamp(1.6rem,3vw,2.2rem);margin:14px 0 18px;}
+.reg-copy p{color:#3A4A50;line-height:1.6;margin-bottom:20px;}
+/* Planes */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0 24px;}
+.plan{background:#fff;border:1px solid var(--line);padding:20px 16px;position:relative;}
+.plan.featured{border-color:#C0793A;border-width:2px;}
+.plan-top-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#C0793A;color:#fff;font-size:.7rem;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap;}
+.plan-name{display:block;font-weight:700;margin-bottom:2px;}
+.plan-price{display:block;font-family:'Newsreader',serif;font-size:1.6rem;color:var(--navy);margin-bottom:10px;}
+.plan-price small{font-size:.85rem;font-weight:400;color:#5C6B70;font-family:var(--font-body);}
+.plan ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;font-size:.83rem;color:#3A4A50;}
+.plan ul li{display:flex;align-items:flex-start;gap:8px;}
+.check-icon{color:#0E6E76;font-size:.9rem;margin-top:1px;}
+.star-icon{color:#C0793A;}
+.terms-link{color:var(--teal);font-size:.88rem;font-weight:600;display:inline-block;margin-top:6px;}
+/* Tabs del form */
+.reg-tabs{display:flex;border-bottom:2px solid var(--line);}
+.reg-tab{flex:1;padding:13px;border:none;background:transparent;font-family:var(--font-body);font-size:.9rem;font-weight:600;cursor:pointer;color:#6B7975;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-2px;}
+.reg-tab.active{color:var(--navy);border-bottom-color:#C0793A;}
+.reg-form{display:none;background:#fff;border:1px solid var(--line);border-top:none;padding:26px;}
+.reg-form.active{display:block;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.fgrid label,.ffull{display:flex;flex-direction:column;gap:5px;font-size:.83rem;font-weight:600;color:#3A4A50;}
+.ffull{margin-bottom:12px;}
+.fgrid input,.fgrid select,.fgrid textarea,.ffull input,.ffull select,.ffull textarea{font-family:var(--font-body);font-size:.9rem;padding:10px 11px;border:1px solid var(--line);border-radius:2px;background:var(--bg);color:var(--ink);font-weight:400;}
+.fgrid input:focus,.fgrid select:focus,.fgrid textarea:focus,.ffull input:focus,.ffull select:focus,.ffull textarea:focus{outline:2px solid var(--teal);outline-offset:1px;}
+.fspan2{grid-column:1/-1;}
+/* Plan selector en form */
+.plan-opts{display:flex;gap:10px;margin:14px 0;}
+.plan-opt{flex:1;display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:2px;cursor:pointer;font-size:.86rem;transition:border-color .2s,background .2s;}
+.plan-opt:has(input:checked){border-color:#C0793A;background:rgba(192,121,58,.05);}
+.plan-opt-badge{background:#C0793A;color:#fff;font-size:.68rem;padding:2px 7px;border-radius:10px;margin-left:4px;}
+/* Info docs */
+.docs-note{background:rgba(14,110,118,.07);border-left:3px solid var(--teal);padding:12px 14px;margin:14px 0;font-size:.83rem;color:#3A4A50;line-height:1.5;}
+/* Acepta */
+.check-row{display:flex;align-items:flex-start;gap:9px;font-size:.83rem;color:#3A4A50;margin:12px 0;cursor:pointer;}
+.check-row input{margin-top:2px;flex-shrink:0;}
+.check-row a{color:var(--teal);font-weight:600;}
+.form-note{font-size:.76rem;color:#8A968F;text-align:center;margin-top:8px;}
+/* Success */
+.form-success{display:none;text-align:center;padding:28px;background:rgba(14,110,118,.06);border:1px solid #3FA796;border-radius:2px;margin-top:10px;}
+.form-success h3{font-family:'Newsreader',serif;font-size:1.2rem;margin:10px 0 8px;}
+.form-success p{color:#3A4A50;font-size:.9rem;}
+/* Checkboxes de especialidades */
+.spec-checks{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:8px 0;}
+.spec-checks label{display:flex;align-items:center;gap:7px;font-weight:400;font-size:.86rem;cursor:pointer;}
+/* Responsive */
+@media(max-width:900px){
+  .tgrid{grid-template-columns:1fr 1fr;}
+  .reg-inner{grid-template-columns:1fr;}
+  .plans{grid-template-columns:1fr;}
+}
+@media(max-width:580px){
+  .tgrid{grid-template-columns:1fr;}
+  .fgrid{grid-template-columns:1fr;}
+  .tsb{flex-direction:column;}
+}
+</style>
 </head>
 <body>
-
 <div class="ecg-progress" id="ecgProgress"></div>
-
 <header class="nav">
   <div class="nav-inner">
     <a href="index.html" class="brand">Medifix<span class="brand-dot">.</span></a>
-    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
     <nav class="nav-links" id="navLinks">
       <a href="tienda.html">Tienda</a>
       <a href="cursos.html">Cursos</a>
@@ -27,116 +133,181 @@
       <a href="nosotros.html">Nosotros</a>
       <a href="contacto.html">Contacto</a>
     </nav>
-    <a href="index.html#cotizador" class="btn btn-copper btn-small">Cotizar equipo</a>
+    <a href="#registro" class="btn btn-copper btn-small">Únete como especialista</a>
   </div>
 </header>
 
 <main>
-  <section class="page-hero">
-    <p class="breadcrumb"><a href="index.html">Inicio</a> / Telemedicina</p>
-    <h1 data-ck="telemedicina.heroTitle">Encuentra tu especialista y agenda tu consulta en línea</h1>
-    <p data-ck="telemedicina.heroSub">Videoconsulta segura, con calificación real de pacientes y disponibilidad al momento.</p>
 
-    <form class="specialist-search" id="specialistSearchForm">
-      <label>Especialidad
-        <select name="specialty" id="searchSpecialtySelect">
-          <option value="todos">Todas las especialidades</option>
-          <option value="general">Medicina General</option>
-          <option value="psicologia">Psicología</option>
-          <option value="nutricion">Nutrición</option>
-          <option value="ginecologia">Ginecología</option>
-          <option value="pediatria">Pediatría</option>
-          <option value="dermatologia">Dermatología</option>
-        </select>
-      </label>
-      <button type="submit" class="btn btn-copper">Buscar especialista</button>
-    </form>
-
-    <div class="specialty-chips-static">
-      <a href="#directorio" data-jump="psicologia">Psicología</a>
-      <a href="#directorio" data-jump="pediatria">Pediatría</a>
-      <a href="#directorio" data-jump="ginecologia">Ginecología</a>
-      <a href="#directorio" data-jump="nutricion">Nutrición</a>
-      <a href="#directorio" data-jump="dermatologia">Dermatología</a>
+<!-- HERO -->
+<section class="th">
+  <div class="th-inner">
+    <p class="eyebrow">Medifix Telemedicina</p>
+    <h1>Encuentra tu especialista.<br>Agenda en minutos.</h1>
+    <p class="th-sub">Directorio verificado de médicos y clínicas en México. Consulta presencial o videollamada.</p>
+    <div class="tsb">
+      <select id="heroSpec">
+        <option value="">Todas las especialidades</option>
+      </select>
+      <select id="heroTipo">
+        <option value="">Médicos y clínicas</option>
+        <option value="medico">Solo médicos</option>
+        <option value="clinica">Solo clínicas</option>
+      </select>
+      <button class="btn btn-copper" onclick="heroSearch()">Buscar</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- VALORES DEL SERVICIO -->
-  <section class="section">
-    <div class="services-grid reveal">
-      <article class="service-card">
-        <span class="service-mono">01</span>
-        <h3 data-ck="telemedicina.value1Title">Especialistas verificados</h3>
-        <p data-ck="telemedicina.value1Desc">Cada perfil pasa por validación de cédula profesional antes de aparecer en el directorio.</p>
-      </article>
-      <article class="service-card service-card-featured">
-        <span class="service-mono">02</span>
-        <h3 data-ck="telemedicina.value2Title">Agenda en minutos</h3>
-        <p data-ck="telemedicina.value2Desc">Elige especialidad, revisa disponibilidad y confirma tu cita sin llamadas.</p>
-      </article>
-      <article class="service-card">
-        <span class="service-mono">03</span>
-        <h3 data-ck="telemedicina.value3Title">Confirmación inmediata</h3>
-        <p data-ck="telemedicina.value3Desc">Recibes la confirmación y el enlace de videollamada directo por WhatsApp.</p>
-      </article>
-      <article class="service-card">
-        <span class="service-mono">04</span>
-        <h3 data-ck="telemedicina.value4Title">Sin costos ocultos</h3>
-        <p data-ck="telemedicina.value4Desc">El precio de la consulta se confirma antes de agendar — nada de sorpresas.</p>
-      </article>
-    </div>
-  </section>
+<!-- CHIPS -->
+<div class="spec-chips">
+  <div class="spec-chips-inner" id="specChips"></div>
+</div>
 
-  <!-- DIRECTORIO DE ESPECIALISTAS -->
-  <section id="directorio" class="section section-alt">
-    <div class="section-head reveal">
-      <p class="eyebrow eyebrow-dark">Directorio</p>
-      <h2>Especialistas disponibles para videoconsulta</h2>
-      <p class="section-sub">Perfiles de ejemplo — reemplázalos por tu propio equipo desde el panel de administrador.</p>
-    </div>
+<!-- TRUST -->
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <div class="trust-item"><span class="trust-icon">🛡️</span> Especialistas con cédula verificada</div>
+    <div class="trust-item"><span class="trust-icon">📹</span> Videollamada o presencial</div>
+    <div class="trust-item"><span class="trust-icon">💬</span> Agenda directo con el consultorio</div>
+    <div class="trust-item"><span class="trust-icon">📋</span> Medifix actúa como intermediario</div>
+  </div>
+</div>
 
-    <div class="filter-row reveal" id="specialistFilterRow" data-target="specialistGrid" data-attr="data-specialty">
-      <button class="filter-chip active" data-filter="todos">Todos</button>
+<!-- DIRECTORIO -->
+<section class="section" id="directorio">
+  <div class="dir-header">
+    <div>
+      <h2 id="dirTitle">Especialistas disponibles</h2>
+      <p id="dirCount" style="color:#5C6B70;font-size:.88rem;margin-top:4px;"></p>
     </div>
+    <div class="dir-filters">
+      <select class="dir-select" id="fSpec" onchange="applyFilters()"><option value="">Todas las especialidades</option></select>
+      <select class="dir-select" id="fTipo" onchange="applyFilters()"><option value="">Médicos y clínicas</option><option value="medico">Solo médicos</option><option value="clinica">Solo clínicas</option></select>
+      <button class="btn btn-small btn-outline-dark" onclick="clearFilters()">Limpiar</button>
+    </div>
+  </div>
+  <div class="tgrid" id="dirGrid"><p class="tdir-loading">Cargando directorio…</p></div>
+  <div id="dirEmpty" style="display:none;text-align:center;padding:48px;color:#8A968F;">
+    <p>No hay especialistas con esos filtros.</p>
+    <button class="btn btn-small btn-outline-dark" onclick="clearFilters()">Ver todos</button>
+  </div>
+</section>
 
-    <div class="specialist-grid reveal" id="specialistGrid">
-      <p style="grid-column:1/-1; color:#8A968F;">Cargando directorio…</p>
-    </div>
-  </section>
+<!-- REGISTRO -->
+<section id="registro" class="reg-section">
+  <div class="reg-inner">
 
-  <!-- TESTIMONIOS -->
-  <section class="section">
-    <div class="section-head reveal">
-      <p class="eyebrow eyebrow-dark">Opiniones</p>
-      <h2>Lo que dicen los pacientes</h2>
-      <p class="section-sub">Ejemplos de cómo se verán las opiniones reales una vez que actives el servicio.</p>
-    </div>
-    <div class="values-grid reveal">
-      <div class="value-card">
-        <h3>★★★★★</h3>
-        <p>"Agendé en la noche y tuve la consulta al día siguiente. Muy claro todo el proceso." — Paciente de ejemplo</p>
+    <!-- COPY -->
+    <div class="reg-copy">
+      <p class="eyebrow eyebrow-dark">¿Eres profesional de la salud?</p>
+      <h2>Súmate al directorio de Medifix Telemedicina</h2>
+      <p><strong>Medifix actúa como intermediario tecnológico</strong>, no como tu empleador ni como prestador del servicio médico. Publicamos tu perfil y conectamos a tus pacientes contigo directamente. La responsabilidad profesional de cada consulta es tuya.</p>
+      <div class="plans">
+        <div class="plan">
+          <span class="plan-name">Plan Comunidad</span>
+          <span class="plan-price">$50<small>/mes</small></span>
+          <ul>
+            <li><span class="check-icon">✓</span> Perfil básico verificado</li>
+            <li><span class="check-icon">✓</span> Aparece en el directorio</li>
+            <li><span class="check-icon">✓</span> Botones de contacto directo</li>
+          </ul>
+        </div>
+        <div class="plan featured">
+          <span class="plan-top-badge">Más popular</span>
+          <span class="plan-name">Plan Visibilidad</span>
+          <span class="plan-price">$200<small>/mes</small></span>
+          <ul>
+            <li><span class="check-icon">✓</span> Todo lo del plan Comunidad</li>
+            <li><span class="star-icon">★</span> Distintivo "Destacado"</li>
+            <li><span class="check-icon">↑</span> Aparece primero en resultados</li>
+            <li><span class="check-icon">✓</span> Mayor visibilidad</li>
+          </ul>
+        </div>
       </div>
-      <div class="value-card">
-        <h3>★★★★★</h3>
-        <p>"El especialista fue puntual y resolvió mis dudas sin necesidad de ir a la clínica." — Paciente de ejemplo</p>
-      </div>
-      <div class="value-card">
-        <h3>★★★★☆</h3>
-        <p>"Muy cómodo para dar seguimiento sin faltar al trabajo." — Paciente de ejemplo</p>
-      </div>
+      <a href="terminos-especialistas.html" target="_blank" class="terms-link">📄 Leer Términos y Condiciones para Especialistas</a>
     </div>
-  </section>
 
-  <section class="section section-dark">
-    <div class="section-head section-head-light reveal" style="margin-bottom:0;">
-      <p class="eyebrow">¿Eres especialista de la salud?</p>
-      <h2 data-ck="telemedicina.ctaHeading">Súmate al directorio de Medifix Telemedicina</h2>
-      <p class="section-sub" data-ck="telemedicina.ctaSub">Da consulta en línea a través de nuestra plataforma y llega a más pacientes, sin costo de entrada.</p>
-      <div style="margin-top:28px;">
-        <a href="https://wa.me/528718336666?text=Hola%20Medifix%2C%20soy%20personal%20de%20salud%20y%20quiero%20sumarme%20al%20directorio%20de%20Telemedicina" class="btn btn-outline" target="_blank" rel="noopener" data-wa-link>Escribir por WhatsApp</a>
+    <!-- FORMULARIOS -->
+    <div>
+      <div class="reg-tabs">
+        <button class="reg-tab active" onclick="switchTab('medico',this)">👨‍⚕️ Soy médico</button>
+        <button class="reg-tab" onclick="switchTab('clinica',this)">🏥 Soy clínica</button>
       </div>
+
+      <!-- FORM MÉDICO -->
+      <form class="reg-form active" id="formMedico">
+        <div class="fgrid">
+          <label>Nombre completo con título*<input type="text" name="nombre" required placeholder="Dr. Juan Pérez López"></label>
+          <label>Correo electrónico*<input type="email" name="correo" required placeholder="juan@consultorio.com"></label>
+          <label>WhatsApp del consultorio*<input type="text" name="whatsapp" required placeholder="52 871 123 4567"></label>
+          <label>Especialidad*
+            <select name="especialidad" id="medSpec" required>
+              <option value="">Selecciona…</option>
+            </select>
+          </label>
+          <label>Número de cédula profesional*<input type="text" name="cedula" required placeholder="12345678"></label>
+          <label>Cédula de especialidad (si aplica)<input type="text" name="cedulaEsp" placeholder="Opcional"></label>
+          <label>RFC*<input type="text" name="rfc" required placeholder="PELJ800101ABC"></label>
+          <label>Costo de consulta<input type="text" name="costo" placeholder="Ej. $500 MXN"></label>
+          <label class="fspan2">Domicilio del consultorio*<input type="text" name="domicilio" required placeholder="Calle, Colonia, Ciudad, Estado"></label>
+          <label class="fspan2">Horarios de atención<input type="text" name="horarios" placeholder="Ej. Lunes-Viernes 9am-6pm"></label>
+          <label class="fspan2">Descripción profesional<textarea name="descripcion" rows="3" placeholder="Experiencia, enfoque, especialización…"></textarea></label>
+        </div>
+        <p style="font-size:.83rem;font-weight:600;color:#3A4A50;margin-bottom:8px;">Elige tu plan:*</p>
+        <div class="plan-opts">
+          <label class="plan-opt"><input type="radio" name="plan" value="comunidad" required> <span><strong>Comunidad</strong> — $50/mes</span></label>
+          <label class="plan-opt"><input type="radio" name="plan" value="visibilidad"> <span><strong>Visibilidad</strong> — $200/mes <span class="plan-opt-badge">Destacado</span></span></label>
+        </div>
+        <div class="docs-note">
+          ℹ️ Después de enviar te pediremos por WhatsApp o correo: copia de tu <strong>cédula profesional</strong>, <strong>identificación oficial</strong> y <strong>comprobante de domicilio</strong> del consultorio. Tu perfil no se publica hasta validar tu documentación.
+        </div>
+        <label class="check-row"><input type="checkbox" name="acepta" required> He leído y acepto los <a href="terminos-especialistas.html" target="_blank">Términos para Especialistas</a> y el <a href="privacidad.html" target="_blank">Aviso de Privacidad</a>.</label>
+        <button type="submit" class="btn btn-copper btn-full">Enviar solicitud por WhatsApp</button>
+        <p class="form-note">* Obligatorio. Los datos sensibles (RFC, cédula) NO se publican en el directorio.</p>
+        <div class="form-success" id="successMed">
+          <div style="font-size:2rem;">✅</div>
+          <h3>¡Solicitud enviada!</h3>
+          <p>Revisa tu WhatsApp. Te contactamos en 24-48 horas hábiles para validar tu documentación y activar tu perfil.</p>
+        </div>
+      </form>
+
+      <!-- FORM CLÍNICA -->
+      <form class="reg-form" id="formClinica">
+        <div class="fgrid">
+          <label>Nombre de la clínica*<input type="text" name="nombre" required placeholder="Clínica San Rafael"></label>
+          <label>Correo de contacto*<input type="email" name="correo" required placeholder="info@clinica.com"></label>
+          <label>WhatsApp*<input type="text" name="whatsapp" required placeholder="52 871 123 4567"></label>
+          <label>RFC*<input type="text" name="rfc" required placeholder="CSR800101XYZ"></label>
+          <label class="fspan2">Domicilio*<input type="text" name="domicilio" required placeholder="Calle, Colonia, Ciudad, Estado"></label>
+          <div class="fspan2">
+            <label>Especialidades que ofrece*</label>
+            <div class="spec-checks" id="cliSpecs"></div>
+          </div>
+          <label class="fspan2">Horarios<input type="text" name="horarios" placeholder="Ej. Lunes-Viernes 7am-8pm"></label>
+          <label class="fspan2">Descripción<textarea name="descripcion" rows="3" placeholder="Servicios, tecnología, enfoque…"></textarea></label>
+        </div>
+        <p style="font-size:.83rem;font-weight:600;color:#3A4A50;margin-bottom:8px;">Elige tu plan:*</p>
+        <div class="plan-opts">
+          <label class="plan-opt"><input type="radio" name="plan" value="comunidad" required> <span><strong>Comunidad</strong> — $50/mes</span></label>
+          <label class="plan-opt"><input type="radio" name="plan" value="visibilidad"> <span><strong>Visibilidad</strong> — $200/mes <span class="plan-opt-badge">Destacado</span></span></label>
+        </div>
+        <div class="docs-note">
+          ℹ️ Después de enviar te pediremos: <strong>constancia de situación fiscal</strong>, <strong>identificación del representante legal</strong> y <strong>comprobante de domicilio</strong>. Tu perfil no se publica hasta validar.
+        </div>
+        <label class="check-row"><input type="checkbox" name="acepta" required> He leído y acepto los <a href="terminos-especialistas.html" target="_blank">Términos para Especialistas</a> y el <a href="privacidad.html" target="_blank">Aviso de Privacidad</a>.</label>
+        <button type="submit" class="btn btn-copper btn-full">Enviar solicitud por WhatsApp</button>
+        <p class="form-note">* Obligatorio. Los datos sensibles no se publican en el directorio.</p>
+        <div class="form-success" id="successCli">
+          <div style="font-size:2rem;">✅</div>
+          <h3>¡Solicitud enviada!</h3>
+          <p>Revisa tu WhatsApp. Te contactamos en 24-48 horas hábiles para validar tu documentación.</p>
+        </div>
+      </form>
     </div>
-  </section>
+  </div>
+</section>
+
 </main>
 
 <footer class="footer">
@@ -144,29 +315,258 @@
     <div class="footer-brand">
       <p class="brand">Medifix<span class="brand-dot">.</span></p>
       <p data-ck="global.footerTagline">Más que equipos, estrategias para tu rentabilidad médica.</p>
+      <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:6px;">Medifix es intermediario tecnológico. No presta servicios médicos.</p>
     </div>
     <div class="footer-col">
-      <h4>Tienda</h4>
-      <a href="tienda.html">Todos los productos</a>
-      <a href="cursos.html">Cursos</a>
-      <a href="telemedicina.html">Telemedicina</a>
+      <h4>Telemedicina</h4>
+      <a href="#directorio">Directorio</a>
+      <a href="#registro">Únete como especialista</a>
+      <a href="terminos-especialistas.html">Términos para especialistas</a>
     </div>
     <div class="footer-col">
       <h4>Empresa</h4>
       <a href="nosotros.html">Nosotros</a>
       <a href="privacidad.html">Aviso de privacidad</a>
-      <a href="admin.html">Acceso administrador</a>
+      <a href="admin-tele.html">Admin telemedicina</a>
     </div>
     <div class="footer-col">
       <h4>Contacto</h4>
       <a href="mailto:contacto@medifix.mx" data-ck="global.email" data-ck-attr="href">contacto@medifix.mx</a>
-      <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener" data-ck="global.instagramUrl" data-ck-attr="href">Instagram</a>
-      <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener" data-ck="global.facebookUrl" data-ck-attr="href">Facebook</a>
+      <a href="https://www.instagram.com/mxmedifix" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61575132607438" target="_blank" rel="noopener">Facebook</a>
     </div>
   </div>
   <p class="footer-legal">© 2026 Medifix. Todos los derechos reservados.</p>
 </footer>
 
 <script src="script.js"></script>
+<script>
+// ── NÚMERO DE WHATSAPP MEDIFIX (para recibir solicitudes) ──
+const MEDIFIX_WA = "528718336666";
+
+// ── ESPECIALIDADES ──
+const SPECS = [
+  {id:"gen",n:"Medicina General",i:"🩺"},
+  {id:"car",n:"Cardiología",i:"❤️"},
+  {id:"ped",n:"Pediatría",i:"👶"},
+  {id:"gin",n:"Ginecología y Obstetricia",i:"🌸"},
+  {id:"psi",n:"Psicología",i:"🧠"},
+  {id:"der",n:"Dermatología",i:"✨"},
+  {id:"nut",n:"Nutrición",i:"🥗"},
+  {id:"ort",n:"Ortopedia",i:"🦴"},
+  {id:"oft",n:"Oftalmología",i:"👁️"},
+  {id:"neu",n:"Neurología",i:"🧬"},
+  {id:"end",n:"Endocrinología",i:"⚗️"},
+  {id:"gas",n:"Gastroenterología",i:"🫀"},
+];
+
+let DIRECTORY = [];   // médicos/clínicas aprobados cargados desde localStorage (admin los agrega)
+let activeSpec = "";
+let activeTipo = "";
+
+// ── ARRANQUE ──
+document.addEventListener('DOMContentLoaded', () => {
+  buildSpecSelects();
+  buildChips();
+  buildClinicSpecCheckboxes();
+  loadDirectory();
+  initForms();
+});
+
+// ── SPEC SELECTS ──
+function buildSpecSelects() {
+  const opts = SPECS.map(s => `<option value="${s.id}">${s.i} ${s.n}</option>`).join('');
+  ['heroSpec','fSpec','medSpec'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const first = el.options[0];
+    el.innerHTML = ''; if (first) el.appendChild(first);
+    el.insertAdjacentHTML('beforeend', opts);
+  });
+}
+
+// ── CHIPS ──
+function buildChips() {
+  const wrap = document.getElementById('specChips');
+  wrap.innerHTML = SPECS.slice(0,10).map(s =>
+    `<button class="spec-chip" data-id="${s.id}" onclick="chipClick(this,'${s.id}')">${s.i} ${s.n}</button>`
+  ).join('');
+}
+function chipClick(btn, id) {
+  const wasActive = btn.classList.contains('active');
+  document.querySelectorAll('.spec-chip').forEach(c => c.classList.remove('active'));
+  activeSpec = wasActive ? '' : id;
+  if (!wasActive) btn.classList.add('active');
+  document.getElementById('fSpec').value = activeSpec;
+  renderDirectory();
+  document.getElementById('directorio').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── CHECKBOXES CLÍNICA ──
+function buildClinicSpecCheckboxes() {
+  document.getElementById('cliSpecs').innerHTML = SPECS.map(s =>
+    `<label><input type="checkbox" name="especialidades" value="${s.n}"> ${s.i} ${s.n}</label>`
+  ).join('');
+}
+
+// ── DIRECTORIO ──
+function loadDirectory() {
+  // Carga del localStorage (el admin agrega especialistas desde admin-tele.html)
+  try {
+    const saved = localStorage.getItem('medifix_approved_specialists');
+    DIRECTORY = saved ? JSON.parse(saved) : getDemoSpecialists();
+  } catch { DIRECTORY = getDemoSpecialists(); }
+  renderDirectory();
+}
+
+function getDemoSpecialists() {
+  return [
+    {id:"DEMO1",tipo:"medico",nombre:"Dr. Ejemplo — reemplázame en el admin",especialidad:"Cardiología",descripcion:"Cardiología clínica e intervencionista. Reemplaza este perfil desde el panel de administrador.",horarios:"Lun-Vie 9am-6pm",costo:"$600 MXN",whatsapp:MEDIFIX_WA,plan:"visibilidad",foto:""},
+    {id:"DEMO2",tipo:"medico",nombre:"Dra. Ejemplo — reemplázame en el admin",especialidad:"Pediatría",descripcion:"Pediatría y seguimiento de desarrollo infantil. Reemplaza este perfil desde el panel de administrador.",horarios:"Lun-Sáb 8am-5pm",costo:"$450 MXN",whatsapp:MEDIFIX_WA,plan:"comunidad",foto:""},
+    {id:"DEMO3",tipo:"clinica",nombre:"Clínica Ejemplo — reemplázame en el admin",especialidad:"Ginecología y Obstetricia",descripcion:"Clínica de ejemplo. Reemplaza este perfil desde el panel de administrador (admin-tele.html).",horarios:"Lun-Vie 7am-8pm",costo:"",whatsapp:MEDIFIX_WA,plan:"visibilidad",foto:""},
+  ];
+}
+
+function renderDirectory() {
+  const grid = document.getElementById('dirGrid');
+  const empty = document.getElementById('dirEmpty');
+  const specLabel = activeSpec ? (SPECS.find(s=>s.id===activeSpec)||{}).n : '';
+
+  let items = [...DIRECTORY];
+  // Destacados primero
+  items.sort((a,b)=>(b.plan==='visibilidad'?1:0)-(a.plan==='visibilidad'?1:0));
+
+  if (activeSpec && specLabel) items = items.filter(d=>d.especialidad.includes(specLabel));
+  if (activeTipo) items = items.filter(d=>d.tipo===activeTipo);
+
+  document.getElementById('dirTitle').textContent = specLabel || 'Especialistas disponibles';
+  document.getElementById('dirCount').textContent = items.length ? `${items.length} resultado${items.length>1?'s':''}` : '';
+
+  if (!items.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  grid.innerHTML = items.map(d => {
+    const ph = (d.whatsapp||MEDIFIX_WA).replace(/\D/g,'');
+    const mP = encodeURIComponent(`Hola, quiero agendar una cita presencial con ${d.nombre} (${d.especialidad}). ¿Qué horarios tienen disponibles?`);
+    const mV = encodeURIComponent(`Hola, quiero agendar una videollamada con ${d.nombre} (${d.especialidad}). ¿Qué horarios tienen disponibles?`);
+    const av = d.foto ? `<img src="${d.foto}" alt="${d.nombre}">` : (d.tipo==='clinica'?'🏥':'👨‍⚕️');
+    return `
+    <article class="tcard ${d.plan==='visibilidad'?'destacado':''}">
+      <div class="tcard-top">
+        ${d.plan==='visibilidad'?'<span class="tcard-badge">★ Destacado</span>':''}
+        ${d.tipo==='clinica'?'<span class="tcard-badge-cli">Clínica</span>':''}
+        <div class="tavatar">${av}</div>
+      </div>
+      <div class="tcard-body">
+        <span class="tcard-spec">${d.especialidad}</span>
+        <h3>${d.nombre}</h3>
+        <p class="tcard-desc">${d.descripcion||''}</p>
+        <div class="tcard-meta">
+          ${d.horarios?`<span style="font-size:.8rem;color:#5C6B70;">🕐 ${d.horarios}</span>`:''}
+          ${d.costo?`<span class="tcard-cost">💰 ${d.costo}</span>`:''}
+          <span class="tcard-avail">ℹ️ Disponibilidad sujeta a confirmación con el consultorio</span>
+        </div>
+      </div>
+      <div class="tcard-actions">
+        <a href="https://wa.me/${ph}?text=${mP}" class="btn btn-outline-dark btn-small" target="_blank" rel="noopener">🏢 Cita presencial</a>
+        <a href="https://wa.me/${ph}?text=${mV}" class="btn btn-copper btn-small" target="_blank" rel="noopener">📹 Videollamada</a>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+// ── FILTROS ──
+function heroSearch() {
+  activeSpec = document.getElementById('heroSpec').value;
+  activeTipo = document.getElementById('heroTipo').value;
+  document.getElementById('fSpec').value = activeSpec;
+  document.getElementById('fTipo').value = activeTipo;
+  document.querySelectorAll('.spec-chip').forEach(c=>c.classList.toggle('active', c.dataset.id===activeSpec));
+  renderDirectory();
+  document.getElementById('directorio').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function applyFilters() {
+  activeSpec = document.getElementById('fSpec').value;
+  activeTipo = document.getElementById('fTipo').value;
+  document.querySelectorAll('.spec-chip').forEach(c=>c.classList.toggle('active', c.dataset.id===activeSpec));
+  renderDirectory();
+}
+function clearFilters() {
+  activeSpec=''; activeTipo='';
+  document.getElementById('fSpec').value='';
+  document.getElementById('fTipo').value='';
+  document.querySelectorAll('.spec-chip').forEach(c=>c.classList.remove('active'));
+  renderDirectory();
+}
+
+// ── TABS ──
+function switchTab(tipo, btn) {
+  document.querySelectorAll('.reg-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.reg-form').forEach(f=>f.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('form' + tipo.charAt(0).toUpperCase() + tipo.slice(1)).classList.add('active');
+}
+
+// ── FORMULARIOS → WHATSAPP ──
+// Los datos llegan a tu WhatsApp de Medifix, tú los revisas y apruebas en el admin
+function initForms() {
+  document.getElementById('formMedico').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = e.target;
+    const d = Object.fromEntries(new FormData(f));
+    const msg = [
+      '🩺 *NUEVA SOLICITUD DE MÉDICO — Medifix Telemedicina*',
+      `*Nombre:* ${d.nombre}`,
+      `*Correo:* ${d.correo}`,
+      `*WhatsApp consultorio:* ${d.whatsapp}`,
+      `*Especialidad:* ${d.especialidad}`,
+      `*Cédula profesional:* ${d.cedula}`,
+      `*Cédula de especialidad:* ${d.cedulaEsp||'N/A'}`,
+      `*RFC:* ${d.rfc}`,
+      `*Domicilio:* ${d.domicilio}`,
+      `*Horarios:* ${d.horarios||'No especificados'}`,
+      `*Costo consulta:* ${d.costo||'No especificado'}`,
+      `*Plan elegido:* ${d.plan==='visibilidad'?'Visibilidad ($200/mes)':'Comunidad ($50/mes)'}`,
+      `*Descripción:* ${d.descripcion||'N/A'}`,
+      '',
+      '📎 El médico acepta los Términos para Especialistas.',
+      '✅ Revisar documentación y aprobar en admin-tele.html'
+    ].join('\n');
+    window.open(`https://wa.me/${MEDIFIX_WA}?text=${encodeURIComponent(msg)}`, '_blank');
+    f.style.display = 'none';
+    document.getElementById('successMed').style.display = 'block';
+  });
+
+  document.getElementById('formClinica').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = e.target;
+    const d = Object.fromEntries(new FormData(f));
+    const specs = [...f.querySelectorAll('[name=especialidades]:checked')].map(i=>i.value).join(', ');
+    const msg = [
+      '🏥 *NUEVA SOLICITUD DE CLÍNICA — Medifix Telemedicina*',
+      `*Nombre:* ${d.nombre}`,
+      `*Correo:* ${d.correo}`,
+      `*WhatsApp:* ${d.whatsapp}`,
+      `*RFC:* ${d.rfc}`,
+      `*Domicilio:* ${d.domicilio}`,
+      `*Especialidades:* ${specs||'No especificadas'}`,
+      `*Horarios:* ${d.horarios||'No especificados'}`,
+      `*Plan elegido:* ${d.plan==='visibilidad'?'Visibilidad ($200/mes)':'Comunidad ($50/mes)'}`,
+      `*Descripción:* ${d.descripcion||'N/A'}`,
+      '',
+      '📎 La clínica acepta los Términos para Especialistas.',
+      '✅ Revisar documentación y aprobar en admin-tele.html'
+    ].join('\n');
+    window.open(`https://wa.me/${MEDIFIX_WA}?text=${encodeURIComponent(msg)}`, '_blank');
+    f.style.display = 'none';
+    document.getElementById('successCli').style.display = 'block';
+  });
+}
+</script>
 </body>
 </html>
+HTMLEOF
+echo "done"
+Output
+
+done
