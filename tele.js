@@ -2,7 +2,7 @@
 // MEDIFIX TELEMEDICINA — tele.js
 // ⚠️ Cambia esta URL por la de tu Google Apps Script desplegado
 // ============================================================
-const API_URL = "https://script.google.com/macros/s/TU_APPS_SCRIPT_URL_AQUI/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyfrcxf-hs4CDMrInhP-yiGu6rQsCoxyJ8Fo0ZbPOtncsaFs-1NrMdCl38nT91v6KDA/exec";
 
 // ============================================================
 // ESTADO GLOBAL
