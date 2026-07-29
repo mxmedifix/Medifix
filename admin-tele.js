@@ -813,8 +813,4 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 </body>
 </html>
-HTMLEOF
-echo "done"
-Output
 
-done
