@@ -3,9 +3,9 @@
 // ⚠️ Cambia esta URL por la de tu Google Apps Script desplegado
 // ⚠️ Cambia esta contraseña por la misma que pusiste en appsscript.gs
 // ============================================================
-const TELE_API   = "https://script.google.com/macros/s/TU_APPS_SCRIPT_URL_AQUI/exec";
-const TELE_SECRET = "medifix-admin-2026-secreto";
-const LOCAL_PASS_KEY = "medifix_tele_pass";
+const TELE_API   = "https://script.google.com/macros/s/AKfycbyfrcxf-hs4CDMrInhP-yiGu6rQsCoxyJ8Fo0ZbPOtncsaFs-1NrMdCl38nT91v6KDA/exec";
+const TELE_SECRET = "medifix2026";
+const LOCAL_PASS_KEY = "medifix2026";
 
 // ============================================================
 // ESTADO GLOBAL
