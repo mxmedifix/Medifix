@@ -1,691 +1,823 @@
-// ============================================================
-// MEDIFIX — admin-tele.js
-// ⚠️ Cambia esta URL por la de tu Google Apps Script desplegado
-// ⚠️ Cambia esta contraseña por la misma que pusiste en appsscript.gs
-// ============================================================
-const TELE_API   = "https://script.google.com/macros/s/AKfycbyfrcxf-hs4CDMrInhP-yiGu6rQsCoxyJ8Fo0ZbPOtncsaFs-1NrMdCl38nT91v6KDA/exec";
-const TELE_SECRET = "medifix2026";
-const LOCAL_PASS_KEY = "medifix2026";
+bash
 
-// ============================================================
-// ESTADO GLOBAL
-// ============================================================
-let allData = { doctors:[], clinics:[], reviews:[], specialties:[], activity:[] };
-let usersPage = 1;
-let usersPerPage = 25;
-let usersSortKey = "fechaRegistro";
-let usersSortAsc = false;
-let editingSpecId = null;
-let chartPlans = null;
-let chartSpecs = null;
+cat > /home/claude/medifix-site/admin-tele.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Telemedicina — Medifix</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'IBM Plex Sans',sans-serif;background:#f0f2f5;min-height:100vh;color:#142B33;}
+a{text-decoration:none;color:inherit;}
+:root{--navy:#0B3049;--teal:#0E6E76;--teal-l:#3FA796;--copper:#C0793A;--line:#DADCD3;--bg:#F5F6F3;--white:#FCFDFB;}
 
-// ============================================================
-// LOGIN
-// ============================================================
-function getAdminPass() {
-  return sessionStorage.getItem(LOCAL_PASS_KEY) || "";
+/* LOGIN */
+#loginWrap{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.login-box{background:#fff;border:1px solid var(--line);padding:44px 36px;width:380px;text-align:center;}
+.login-box .brand{font-family:'Newsreader',serif;font-size:1.6rem;color:var(--navy);margin-bottom:6px;display:block;}
+.login-box h2{font-family:'Newsreader',serif;font-size:1.3rem;margin-bottom:6px;}
+.login-box p{font-size:.88rem;color:#5C6B70;margin-bottom:22px;}
+.login-box input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:2px;margin-bottom:12px;font-family:inherit;font-size:.95rem;}
+.login-box input:focus{outline:2px solid var(--teal);}
+.login-err{color:#B33A3A;font-size:.82rem;margin-top:8px;min-height:18px;}
+
+/* SIDEBAR */
+#sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--navy);color:rgba(255,255,255,.85);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:24px 22px 18px;border-bottom:1px solid rgba(255,255,255,.1);}
+.sb-brand span{font-family:'Newsreader',serif;font-size:1.4rem;color:#fff;}
+.sb-brand small{display:block;font-size:.72rem;color:rgba(255,255,255,.45);margin-top:2px;}
+.sb-nav{padding:14px 0;flex:1;}
+.sb-btn{display:flex;align-items:center;gap:11px;padding:12px 22px;cursor:pointer;font-size:.88rem;color:rgba(255,255,255,.7);transition:all .2s;border:none;background:transparent;width:100%;text-align:left;font-family:inherit;}
+.sb-btn:hover{background:rgba(255,255,255,.06);color:#fff;}
+.sb-btn.active{background:rgba(63,167,150,.18);color:#fff;border-right:3px solid var(--teal-l);}
+.sb-btn i{width:18px;text-align:center;}
+.sb-sep{height:1px;background:rgba(255,255,255,.08);margin:6px 22px;}
+.sb-foot{padding:16px 22px;border-top:1px solid rgba(255,255,255,.1);}
+
+/* TOPBAR */
+#topbar{position:fixed;left:230px;right:0;top:0;height:58px;background:#fff;border-bottom:1px solid var(--line);z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 26px;}
+#topbar-title{font-weight:700;font-size:1rem;color:var(--navy);}
+.bell-wrap{position:relative;cursor:pointer;}
+.bell-badge{position:absolute;top:-4px;right:-4px;background:var(--copper);color:#fff;font-size:.62rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+/* MAIN */
+#main{margin-left:230px;padding-top:58px;}
+.page{display:none;padding:28px 26px;}
+.page.active{display:block;}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:26px;}
+.stat{background:#fff;border:1px solid var(--line);padding:20px;}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#6B7975;}
+.stat-num{font-family:'Newsreader',serif;font-size:2rem;color:var(--navy);line-height:1.1;margin:4px 0 2px;}
+.stat-sub{font-size:.78rem;color:#8A968F;}
+.stat.warn .stat-num{color:#C0793A;}
+.stat.teal .stat-num{color:var(--teal);}
+
+/* CHARTS */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;}
+.chart-card{background:#fff;border:1px solid var(--line);padding:20px;}
+.chart-card h4{font-size:.88rem;color:var(--navy);margin-bottom:14px;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--line);margin-bottom:20px;}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.card-head h3{font-size:.95rem;color:var(--navy);}
+.card-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.card-scroll{overflow-x:auto;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:2px;font-weight:600;font-size:.88rem;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-copper{background:var(--copper);color:#fff;border-color:var(--copper);}
+.btn-copper:hover{background:#A6632B;}
+.btn-outline{background:transparent;color:var(--navy);border-color:var(--navy);}
+.btn-outline:hover{background:var(--navy);color:#fff;}
+.btn-danger{background:transparent;color:#B33A3A;border-color:#B33A3A;}
+.btn-danger:hover{background:#B33A3A;color:#fff;}
+.btn-sm{padding:6px 12px;font-size:.76rem;}
+.btn-full{width:100%;}
+.btn-green{background:#065F46;color:#fff;border-color:#065F46;}
+.btn-green:hover{background:#047857;}
+input.search{padding:8px 12px;border:1px solid var(--line);border-radius:2px;font-family:inherit;font-size:.85rem;background:var(--bg);min-width:180px;}
+input.search:focus{outline:2px solid var(--teal);}
+select.fsel{padding:8px 10px;border:1px solid var(--line);border-radius:2px;font-family:inherit;font-size:.83rem;background:#fff;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.83rem;}
+th{padding:10px 14px;border-bottom:2px solid var(--line);text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:#6B7975;background:var(--bg);white-space:nowrap;cursor:pointer;}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(14,110,118,.02);}
+.actions{display:flex;gap:5px;flex-wrap:wrap;}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 9px;border-radius:2px;font-size:.7rem;font-weight:600;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+.b-pending{background:#FEF3C7;color:#92400E;}
+.b-ok{background:#D1FAE5;color:#065F46;}
+.b-no{background:#FEE2E2;color:#991B1B;}
+.b-teal{background:rgba(14,110,118,.12);color:var(--teal);}
+.b-gray{background:var(--bg);color:#6B7975;}
+.b-copper{background:rgba(192,121,58,.12);color:#A6632B;}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;gap:6px;padding:12px 20px;border-top:1px solid var(--line);flex-wrap:wrap;}
+.pag-btn{padding:5px 11px;border:1px solid var(--line);background:#fff;font-size:.8rem;cursor:pointer;border-radius:2px;font-family:inherit;}
+.pag-btn:hover,.pag-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.pag-info{font-size:.8rem;color:#8A968F;margin-left:auto;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:#fff;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;border-radius:3px;box-shadow:0 32px 64px -20px rgba(0,0,0,.4);}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;}
+.modal-head h3{font-size:1.05rem;}
+.modal-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#6B7975;line-height:1;}
+.modal-body{padding:22px;}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.detail-item{font-size:.86rem;}
+.detail-item strong{display:block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:#6B7975;margin-bottom:2px;}
+.edit-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
+.edit-row label{display:flex;flex-direction:column;gap:5px;font-size:.82rem;font-weight:600;color:#3A4A50;flex:1;min-width:140px;}
+.edit-row select,.edit-row textarea,.edit-row input{font-family:inherit;font-size:.88rem;padding:9px 10px;border:1px solid var(--line);border-radius:2px;background:var(--bg);}
+
+/* FORM */
+.form-card{background:#fff;border:1px solid var(--line);padding:22px;}
+.form-card h3{font-size:.95rem;margin-bottom:14px;color:var(--navy);}
+.form-group{display:flex;flex-direction:column;gap:5px;font-size:.82rem;font-weight:600;color:#3A4A50;margin-bottom:12px;}
+.form-group input,.form-group select,.form-group textarea{font-family:inherit;font-size:.88rem;padding:9px 10px;border:1px solid var(--line);border-radius:2px;background:var(--bg);}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:2px solid var(--teal);}
+
+/* ACTIVITY */
+.activity-list{list-style:none;}
+.activity-item{display:flex;gap:12px;padding:11px 20px;border-bottom:1px solid var(--line);font-size:.83rem;}
+.activity-item:last-child{border-bottom:none;}
+.act-dot{width:28px;height:28px;border-radius:50%;background:rgba(14,110,118,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--teal);font-size:.7rem;}
+.act-text{flex:1;}
+.act-time{color:#8A968F;font-family:'IBM Plex Mono',monospace;font-size:.7rem;align-self:center;white-space:nowrap;}
+
+/* TOAST */
+#toasts{position:fixed;bottom:22px;right:22px;z-index:300;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--teal);color:#fff;padding:12px 18px;border-radius:3px;font-size:.85rem;box-shadow:0 8px 24px -6px rgba(0,0,0,.3);max-width:300px;}
+.toast.err{background:#B33A3A;}
+.toast.warn{background:#92400E;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{display:none;}
+  #topbar,#main{left:0;margin-left:0;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .charts{grid-template-columns:1fr;}
+  .detail-grid{grid-template-columns:1fr;}
 }
+</style>
+</head>
+<body>
 
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-box">
+    <span class="brand">Medifix<span style="color:#C0793A;">.</span></span>
+    <h2>Panel Telemedicina</h2>
+    <p>Acceso exclusivo para administradores</p>
+    <form id="loginForm">
+      <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password" required>
+      <button type="submit" class="btn btn-copper btn-full">Entrar</button>
+    </form>
+    <p class="login-err" id="loginErr"></p>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="panel" style="display:none;">
+  <aside id="sidebar">
+    <div class="sb-brand">
+      <span>Medifix<span style="color:#C0793A;">.</span></span>
+      <small>Panel Telemedicina</small>
+    </div>
+    <nav class="sb-nav">
+      <button class="sb-btn active" data-page="dash">📊 Dashboard</button>
+      <button class="sb-btn" data-page="users">👥 Usuarios</button>
+      <button class="sb-btn" data-page="specs">🩺 Especialidades</button>
+      <button class="sb-btn" data-page="subs">💳 Suscripciones</button>
+      <div class="sb-sep"></div>
+      <button class="sb-btn" data-page="config">⚙️ Configuración</button>
+    </nav>
+    <div class="sb-foot">
+      <button class="sb-btn" id="logoutBtn" style="padding:8px 0;">🚪 Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div id="topbar">
+    <span id="topbar-title">Dashboard</span>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="bell-wrap" id="bellBtn" title="Pendientes">
+        🔔 <span class="bell-badge" id="bellN" style="display:none;">0</span>
+      </div>
+      <span style="font-size:.83rem;color:#5C6B70;">Admin Medifix</span>
+    </div>
+  </div>
+
+  <main id="main">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dash">
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Médicos</span><span class="stat-num" id="sMed">0</span></div>
+        <div class="stat"><span class="stat-label">Clínicas</span><span class="stat-num" id="sCli">0</span></div>
+        <div class="stat warn"><span class="stat-label">Pendientes aprobación</span><span class="stat-num" id="sPend">0</span></div>
+        <div class="stat teal"><span class="stat-label">Ingresos est./mes</span><span class="stat-num" id="sRev">$0</span></div>
+      </div>
+      <div class="charts">
+        <div class="chart-card"><h4>Distribución por plan</h4><canvas id="cPlans" style="max-height:210px;"></canvas></div>
+        <div class="chart-card"><h4>Top especialidades</h4><canvas id="cSpecs" style="max-height:210px;"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📋 Últimas actividades</h3></div>
+        <ul class="activity-list" id="actList"><li class="activity-item"><span style="color:#8A968F;">Sin actividad registrada.</span></li></ul>
+      </div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div class="page" id="page-users">
+      <div class="card">
+        <div class="card-head">
+          <h3>Médicos y clínicas registradas</h3>
+          <div class="card-tools">
+            <input type="text" class="search" id="uSearch" placeholder="Buscar nombre, correo…">
+            <select class="fsel" id="uFTipo"><option value="">Todos</option><option value="medico">Médicos</option><option value="clinica">Clínicas</option></select>
+            <select class="fsel" id="uFPlan"><option value="">Todos los planes</option><option value="visibilidad">Visibilidad</option><option value="comunidad">Comunidad</option></select>
+            <select class="fsel" id="uFStatus"><option value="">Todos los estados</option><option value="pendiente">Pendiente</option><option value="aprobado">Aprobado</option><option value="rechazado">Rechazado</option></select>
+            <button class="btn btn-sm btn-outline" onclick="exportCSV()">⬇ CSV</button>
+            <button class="btn btn-sm btn-green" onclick="approveAll()">✓ Aprobar pendientes</button>
+          </div>
+        </div>
+        <div class="card-scroll">
+          <table>
+            <thead><tr>
+              <th>Tipo</th><th onclick="sortBy('nombre')">Nombre ↕</th><th>Correo</th>
+              <th>Especialidad</th><th>Plan</th><th>Pago</th><th>Aprobación</th>
+              <th onclick="sortBy('fechaRegistro')">Fecha ↕</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="uBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="uPag"></div>
+      </div>
+    </div>
+
+    <!-- ESPECIALIDADES -->
+    <div class="page" id="page-specs">
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start;">
+        <div class="form-card">
+          <h3 id="specFTitle">➕ Agregar especialidad</h3>
+          <div class="form-group">Nombre<input type="text" id="specName" placeholder="Ej. Cardiología"></div>
+          <div class="form-group">Ícono (emoji)<input type="text" id="specIcon" placeholder="Ej. ❤️"></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-copper" onclick="saveSpec()">Guardar</button>
+            <button class="btn btn-outline btn-sm" onclick="cancelSpec()">Cancelar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Especialidades activas</h3></div>
+          <div class="card-scroll">
+            <table><thead><tr><th>Ícono</th><th>Nombre</th><th>Médicos</th><th>Acciones</th></tr></thead>
+            <tbody id="specBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUSCRIPCIONES -->
+    <div class="page" id="page-subs">
+      <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+        <div class="stat stat-copper"><span class="stat-label">Plan Visibilidad ($200/mes)</span><span class="stat-num" id="sVis">0</span><span class="stat-sub" id="sVisR">activos</span></div>
+        <div class="stat"><span class="stat-label">Plan Comunidad ($50/mes)</span><span class="stat-num" id="sCom">0</span><span class="stat-sub" id="sComR">activos</span></div>
+        <div class="stat teal"><span class="stat-label">Total estimado/mes</span><span class="stat-num" id="sTot">$0</span></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Gestión de suscripciones</h3></div>
+        <div class="card-scroll">
+          <table><thead><tr><th>Nombre</th><th>Tipo</th><th>Plan</th><th>Estado pago</th><th>Notas</th><th>Acciones</th></tr></thead>
+          <tbody id="subBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="page" id="page-config">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="form-card">
+          <h3>🔑 Contraseña del panel</h3>
+          <div class="form-group" style="margin-top:14px;">Nueva contraseña<input type="password" id="newPass"></div>
+          <div class="form-group">Confirmar<input type="password" id="confPass"></div>
+          <button class="btn btn-copper btn-sm" onclick="changePass()">Cambiar contraseña</button>
+          <p id="passMsg" style="font-size:.8rem;margin-top:8px;"></p>
+        </div>
+        <div class="form-card">
+          <h3>💾 Respaldo de datos</h3>
+          <p style="font-size:.85rem;color:#5C6B70;margin:12px 0 16px;">Descarga una copia de todos los registros.</p>
+          <button class="btn btn-outline" onclick="backup()">⬇ Descargar JSON</button>
+        </div>
+        <div class="form-card" style="grid-column:1/-1;">
+          <h3>📜 Log de actividad</h3>
+          <ul class="activity-list" id="cfgActivity" style="max-height:220px;overflow-y:auto;border:1px solid var(--line);margin-top:12px;"></ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" style="display:none;" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="mTitle">Detalle</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+    <div class="modal-foot" id="mFoot"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ── CONSTANTES ──
+const PASS_KEY  = 'medifix_tele_pass';
+const DATA_KEY  = 'medifix_tele_data';
+const SPECS_KEY = 'medifix_tele_specs';
+const PUB_KEY   = 'medifix_approved_specialists'; // lo lee telemedicina.html
+
+// ── DATOS ──
+let DB = { users:[], activity:[] };
+let SPECS = [];
+let sortKey = 'fechaRegistro';
+let sortAsc = false;
+let page = 1;
+const PER_PAGE = 25;
+let editSpecId = null;
+let cPlans = null, cSpecs = null;
+
+// ── PASSWORD ──
+function getPass(){ return localStorage.getItem(PASS_KEY) || 'medifix2026'; }
+
+// ── LOGIN ──
+document.getElementById('loginForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const pass = document.getElementById('loginPass').value;
-  const errEl = document.getElementById('loginError');
-  errEl.textContent = '';
-
-  // Verificamos contra el servidor
-  try {
-    const res = await apiGet({ action: 'adminGetStats', secret: pass });
-    if (res.ok) {
-      sessionStorage.setItem(LOCAL_PASS_KEY, pass);
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      initPanel();
-    } else {
-      errEl.textContent = 'Contraseña incorrecta.';
-    }
-  } catch {
-    // Si no hay API configurada, acepta la contraseña local
-    const localPass = localStorage.getItem('medifix_tele_local_pass') || 'medifix2026';
-    if (pass === localPass) {
-      sessionStorage.setItem(LOCAL_PASS_KEY, pass);
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      initPanel();
-    } else {
-      errEl.textContent = 'Contraseña incorrecta. (local: medifix2026)';
-    }
+  const v = document.getElementById('loginPass').value;
+  if(v === getPass()){
+    sessionStorage.setItem('tele_auth','1');
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('panel').style.display='block';
+    init();
+  } else {
+    document.getElementById('loginErr').textContent='Contraseña incorrecta.';
   }
 });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem(LOCAL_PASS_KEY);
+if(sessionStorage.getItem('tele_auth')==='1'){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('panel').style.display='block';
+}
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  sessionStorage.removeItem('tele_auth');
   location.reload();
 });
 
-// ============================================================
-// API HELPERS
-// ============================================================
-async function apiGet(params) {
-  const url = new URL(TELE_API);
-  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
-  const res = await fetch(url.toString());
-  return res.json();
-}
-
-async function apiPost(data) {
-  const res = await fetch(TELE_API, {
-    method:'POST',
-    body: JSON.stringify({ ...data, secret: getAdminPass() }),
-    headers: { 'Content-Type': 'application/json' }
+// ── NAVEGACIÓN ──
+const PAGE_TITLES={'dash':'Dashboard','users':'Gestión de usuarios','specs':'Especialidades','subs':'Suscripciones','config':'Configuración'};
+document.querySelectorAll('.sb-btn[data-page]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-'+btn.dataset.page).classList.add('active');
+    document.getElementById('topbar-title').textContent = PAGE_TITLES[btn.dataset.page]||'';
   });
-  return res.json();
-}
+});
 
-// ============================================================
-// INIT PANEL
-// ============================================================
-async function initPanel() {
-  initNav();
-  initBell();
-  await loadAllData();
-  renderDashboard();
+// ── INIT ──
+function init(){
+  loadDB();
+  loadSpecs();
+  renderDash();
   renderUsers();
-  renderSpecialties();
-  renderSubscriptions();
-  renderReviews();
-  renderActivityLog();
-  initConfig();
-}
+  renderSpecs();
+  renderSubs();
+  renderCfgActivity();
 
-async function loadAllData() {
-  try {
-    const res = await apiGet({ action: 'adminGetAll', secret: getAdminPass() });
-    if (res.ok) {
-      allData = res.data;
-    } else {
-      // Demo data si no hay API
-      allData = getDemoData();
-    }
-  } catch {
-    allData = getDemoData();
-  }
-}
+  // filtros y búsqueda
+  ['uSearch','uFTipo','uFPlan','uFStatus'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('input', ()=>{page=1;renderUsers();});
+  });
 
-function getDemoData() {
-  return {
-    doctors: [
-      { id:'DOC-001', fechaRegistro:'2026-07-20T10:00:00.000Z', tipo:'medico', nombre:'Dr. Juan Pérez López', correo:'juan@ejemplo.com', telefono:'52 8712345678', whatsapp:'528712345678', especialidad:'Cardiología', cedula:'12345678', cedulaEspecialidad:'87654321', rfc:'PELJ800101ABC', domicilio:'Av. Principal 100, Torreón, Coahuila', descripcion:'Cardiólogo con 10 años de experiencia.', horarios:'Lun-Vie 9am-6pm', costoConsulta:'$600 MXN', plan:'visibilidad', estadoPago:'activo', estadoAprobacion:'aprobado', activo:'true', notas:'' },
-      { id:'DOC-002', fechaRegistro:'2026-07-25T14:00:00.000Z', tipo:'medico', nombre:'Dra. Ana García Ruiz', correo:'ana@ejemplo.com', telefono:'52 8719876543', whatsapp:'528719876543', especialidad:'Pediatría', cedula:'87654321', cedulaEspecialidad:'', rfc:'GARA850202DEF', domicilio:'Calle Sur 200, Torreón, Coahuila', descripcion:'Pediatra especializada en desarrollo infantil.', horarios:'Lun-Sáb 8am-5pm', costoConsulta:'$450 MXN', plan:'comunidad', estadoPago:'pendiente', estadoAprobacion:'pendiente', activo:'false', notas:'' },
-    ],
-    clinics: [
-      { id:'CLI-001', fechaRegistro:'2026-07-22T09:00:00.000Z', tipo:'clinica', nombre:'Clínica San Rafael', correo:'info@sanrafael.com', telefono:'52 8718001234', whatsapp:'528718001234', especialidades:'Ginecología, Dermatología', rfc:'CSR800101XYZ', domicilio:'Blvd. Las Torres 300, Torreón', descripcion:'Clínica multidisciplinaria con 15 años de trayectoria.', horarios:'Lun-Vie 7am-8pm, Sáb 8am-4pm', plan:'visibilidad', estadoPago:'activo', estadoAprobacion:'aprobado', activo:'true', notas:'' },
-    ],
-    reviews: [
-      { id:'REV-001', fechaRegistro:'2026-07-26T11:00:00.000Z', medicoId:'DOC-001', pacienteNombre:'Paciente anónimo', calificacion:5, texto:'Excelente atención, muy puntual y claro en su diagnóstico.', estado:'pendiente' },
-    ],
-    specialties: [
-      { id:'esp001', nombre:'Medicina General', activa:'TRUE', icono:'🩺' },
-      { id:'esp002', nombre:'Cardiología', activa:'TRUE', icono:'❤️' },
-      { id:'esp003', nombre:'Pediatría', activa:'TRUE', icono:'👶' },
-      { id:'esp004', nombre:'Ginecología y Obstetricia', activa:'TRUE', icono:'🌸' },
-      { id:'esp005', nombre:'Psicología', activa:'TRUE', icono:'🧠' },
-      { id:'esp006', nombre:'Dermatología', activa:'TRUE', icono:'✨' },
-    ],
-    activity: [
-      { fecha:'2026-07-26T12:00:00.000Z', accion:'Nuevo médico registrado', detalle:'Dr. Juan Pérez López — Cardiología — Plan: visibilidad' },
-      { fecha:'2026-07-25T10:00:00.000Z', accion:'Nueva clínica registrada', detalle:'Clínica San Rafael — Plan: visibilidad' },
-    ]
-  };
-}
-
-// ============================================================
-// NAVEGACIÓN
-// ============================================================
-const PAGE_TITLES = { dashboard:'Dashboard', usuarios:'Gestión de usuarios', especialidades:'Especialidades', suscripciones:'Suscripciones', resenas:'Reseñas', configuracion:'Configuración' };
-
-function initNav() {
-  document.querySelectorAll('.admin-nav-item[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('page-' + btn.dataset.page).classList.add('active');
-      document.getElementById('pageTitle').textContent = PAGE_TITLES[btn.dataset.page] || '';
-    });
+  document.getElementById('bellBtn').addEventListener('click', ()=>{
+    goPage('users');
+    document.getElementById('uFStatus').value='pendiente';
+    page=1; renderUsers();
   });
 }
 
-// ============================================================
-// TOAST
-// ============================================================
-function toast(msg, type='success') {
-  const el = document.createElement('div');
-  el.style.cssText = `background:${type==='error'?'#B33A3A':type==='warning'?'#92400E':'var(--teal)'};color:white;padding:12px 18px;border-radius:3px;font-size:0.88rem;box-shadow:0 8px 24px -6px rgba(0,0,0,0.3);max-width:320px;`;
-  el.textContent = msg;
-  document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+// ── LOAD / SAVE DB ──
+function loadDB(){
+  try{ DB = JSON.parse(localStorage.getItem(DATA_KEY)||'{"users":[],"activity":[]}'); }
+  catch{ DB = {users:[],activity:[]}; }
+}
+function saveDB(){
+  localStorage.setItem(DATA_KEY, JSON.stringify(DB));
+  publishApproved();
+}
+function loadSpecs(){
+  const def=[
+    {id:'s01',n:'Medicina General',i:'🩺'},
+    {id:'s02',n:'Cardiología',i:'❤️'},
+    {id:'s03',n:'Pediatría',i:'👶'},
+    {id:'s04',n:'Ginecología y Obstetricia',i:'🌸'},
+    {id:'s05',n:'Psicología',i:'🧠'},
+    {id:'s06',n:'Dermatología',i:'✨'},
+    {id:'s07',n:'Nutrición',i:'🥗'},
+    {id:'s08',n:'Ortopedia',i:'🦴'},
+    {id:'s09',n:'Oftalmología',i:'👁️'},
+    {id:'s10',n:'Neurología',i:'🧬'},
+  ];
+  try{ SPECS = JSON.parse(localStorage.getItem(SPECS_KEY))||def; }
+  catch{ SPECS = def; }
+}
+function saveSpecs(){ localStorage.setItem(SPECS_KEY, JSON.stringify(SPECS)); }
+
+// Publica los aprobados para que telemedicina.html los muestre
+function publishApproved(){
+  const approved = DB.users.filter(u=>u.aprobacion==='aprobado'&&u.activo).map(u=>({
+    id:u.id, tipo:u.tipo, nombre:u.nombre,
+    especialidad: u.especialidad||u.especialidades||'',
+    descripcion:u.descripcion||'', horarios:u.horarios||'',
+    costo:u.costo||'', whatsapp:u.whatsapp||'',
+    plan:u.plan||'comunidad', foto:u.foto||''
+  }));
+  localStorage.setItem(PUB_KEY, JSON.stringify(approved));
 }
 
-// ============================================================
-// DASHBOARD
-// ============================================================
-function renderDashboard() {
-  const docs = allData.doctors || [];
-  const clis = allData.clinics || [];
-  const all = [...docs, ...clis];
-  const pending = all.filter(u => u.estadoAprobacion === 'pendiente').length;
-  const visCount = all.filter(u => u.plan === 'visibilidad' && u.estadoPago === 'activo').length;
-  const comCount = all.filter(u => u.plan === 'comunidad' && u.estadoPago === 'activo').length;
-  const revenue = visCount * 200 + comCount * 50;
+function logActivity(accion, detalle){
+  DB.activity.unshift({fecha:new Date().toISOString(), accion, detalle});
+  if(DB.activity.length>100) DB.activity=DB.activity.slice(0,100);
+}
 
-  document.getElementById('statDoctors').textContent = docs.length;
-  document.getElementById('statClinics').textContent = clis.length;
-  document.getElementById('statPending').textContent = pending;
-  document.getElementById('statRevenue').textContent = '$' + revenue.toLocaleString();
+// ── DASHBOARD ──
+function renderDash(){
+  const meds=DB.users.filter(u=>u.tipo==='medico').length;
+  const clis=DB.users.filter(u=>u.tipo==='clinica').length;
+  const pend=DB.users.filter(u=>u.aprobacion==='pendiente').length;
+  const visA=DB.users.filter(u=>u.plan==='visibilidad'&&u.pago==='activo').length;
+  const comA=DB.users.filter(u=>u.plan==='comunidad'&&u.pago==='activo').length;
+  const rev=visA*200+comA*50;
 
-  renderCharts(all);
+  document.getElementById('sMed').textContent=meds;
+  document.getElementById('sCli').textContent=clis;
+  document.getElementById('sPend').textContent=pend;
+  document.getElementById('sRev').textContent='$'+rev.toLocaleString();
+
+  const bellN=document.getElementById('bellN');
+  bellN.style.display=pend>0?'flex':'none';
+  bellN.textContent=pend;
+
+  renderCharts();
   renderActivity();
-  updateBell(pending, (allData.reviews||[]).filter(r=>r.estado==='pendiente').length);
 }
 
-function renderCharts(all) {
-  const planData = {
-    visibilidad: all.filter(u=>u.plan==='visibilidad').length,
-    comunidad: all.filter(u=>u.plan==='comunidad').length
-  };
+function renderCharts(){
+  const vis=DB.users.filter(u=>u.plan==='visibilidad').length;
+  const com=DB.users.filter(u=>u.plan==='comunidad').length;
 
-  if (chartPlans) chartPlans.destroy();
-  const ctx1 = document.getElementById('chartPlans').getContext('2d');
-  chartPlans = new Chart(ctx1, {
-    type: 'doughnut',
-    data: {
-      labels: ['Visibilidad ($200)', 'Comunidad ($50)'],
-      datasets: [{ data: [planData.visibilidad, planData.comunidad], backgroundColor: ['#C0793A','#0E6E76'], borderWidth:0 }]
-    },
-    options: { responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'bottom', labels:{ font:{family:'IBM Plex Sans', size:12} } } } }
+  if(cPlans) cPlans.destroy();
+  cPlans=new Chart(document.getElementById('cPlans'),{
+    type:'doughnut',
+    data:{labels:['Visibilidad ($200)','Comunidad ($50)'],datasets:[{data:[vis,com],backgroundColor:['#C0793A','#0E6E76'],borderWidth:0}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'IBM Plex Sans',size:11}}}}}
   });
 
-  // Especialidades top 6
-  const specCount = {};
-  all.forEach(u => {
-    const spec = u.especialidad || u.especialidades || '';
-    spec.split(',').forEach(s => {
-      const t = s.trim();
-      if (t) specCount[t] = (specCount[t]||0) + 1;
+  const specCount={};
+  DB.users.forEach(u=>{
+    (u.especialidad||u.especialidades||'').split(',').forEach(s=>{
+      const t=s.trim(); if(t) specCount[t]=(specCount[t]||0)+1;
     });
   });
-  const sorted = Object.entries(specCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const top=Object.entries(specCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
 
-  if (chartSpecs) chartSpecs.destroy();
-  const ctx2 = document.getElementById('chartSpecs').getContext('2d');
-  chartSpecs = new Chart(ctx2, {
-    type: 'bar',
-    data: {
-      labels: sorted.map(s=>s[0]),
-      datasets: [{ label:'Registros', data:sorted.map(s=>s[1]), backgroundColor:'#0E6E76', borderRadius:2 }]
-    },
-    options: { responsive:true, maintainAspectRatio:true, indexAxis:'y', plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true, ticks:{ precision:0 } } } }
+  if(cSpecs) cSpecs.destroy();
+  cSpecs=new Chart(document.getElementById('cSpecs'),{
+    type:'bar',
+    data:{labels:top.map(s=>s[0]),datasets:[{label:'Registros',data:top.map(s=>s[1]),backgroundColor:'#0E6E76',borderRadius:2}]},
+    options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}
   });
 }
 
-function renderActivity() {
-  const list = document.getElementById('activityList');
-  const items = (allData.activity || []).slice(0, 10);
-  if (!items.length) { list.innerHTML = '<li class="admin-activity-item"><span style="color:#8A968F;">Sin actividad registrada.</span></li>'; return; }
-  list.innerHTML = items.map(a => `
-    <li class="admin-activity-item">
-      <div class="admin-activity-icon"><i class="fa-solid fa-circle-dot fa-xs"></i></div>
-      <div class="admin-activity-text"><strong>${a.accion}</strong><br><span style="color:#5C6B70;">${a.detalle||''}</span></div>
-      <span class="admin-activity-time">${formatDate(a.fecha)}</span>
+function renderActivity(){
+  const al=document.getElementById('actList');
+  if(!DB.activity.length){al.innerHTML='<li class="activity-item"><span style="color:#8A968F;">Sin actividad.</span></li>';return;}
+  al.innerHTML=DB.activity.slice(0,10).map(a=>`
+    <li class="activity-item">
+      <div class="act-dot">●</div>
+      <div class="act-text"><strong>${a.accion}</strong><br><span style="color:#5C6B70;">${a.detalle||''}</span></div>
+      <span class="act-time">${fDate(a.fecha)}</span>
     </li>`).join('');
 }
 
-// ============================================================
-// CAMPANA DE NOTIFICACIONES
-// ============================================================
-function initBell() {
-  document.getElementById('bellBtn').addEventListener('click', () => {
-    document.getElementById('notifDropdown').classList.toggle('is-open');
-  });
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#bellBtn') && !e.target.closest('#notifDropdown')) {
-      document.getElementById('notifDropdown').classList.remove('is-open');
-    }
-  });
+// ── USUARIOS ──
+function getFiltered(){
+  let u=[...DB.users];
+  const s=document.getElementById('uSearch')?.value?.toLowerCase()||'';
+  const t=document.getElementById('uFTipo')?.value||'';
+  const pl=document.getElementById('uFPlan')?.value||'';
+  const st=document.getElementById('uFStatus')?.value||'';
+  if(s) u=u.filter(x=>(x.nombre+x.correo+x.especialidad).toLowerCase().includes(s));
+  if(t) u=u.filter(x=>x.tipo===t);
+  if(pl) u=u.filter(x=>x.plan===pl);
+  if(st) u=u.filter(x=>x.aprobacion===st);
+  u.sort((a,b)=>{const va=a[sortKey]||'',vb=b[sortKey]||''; return sortAsc?va.localeCompare(vb):vb.localeCompare(va);});
+  return u;
 }
 
-function updateBell(pending, pendingReviews) {
-  const total = pending + pendingReviews;
-  const badge = document.getElementById('bellBadge');
-  badge.style.display = total > 0 ? 'flex' : 'none';
-  badge.textContent = total;
-  const list = document.getElementById('notifList');
-  const items = [];
-  if (pending > 0) items.push(`<div class="admin-notif-item"><i class="fa-solid fa-user-clock"></i><span><strong>${pending} registro${pending>1?'s':''}</strong> pendiente${pending>1?'s':''} de aprobación</span></div>`);
-  if (pendingReviews > 0) items.push(`<div class="admin-notif-item"><i class="fa-solid fa-star"></i><span><strong>${pendingReviews} reseña${pendingReviews>1?'s':''}</strong> pendiente${pendingReviews>1?'s':''} de moderación</span></div>`);
-  list.innerHTML = items.length ? items.join('') : '<div class="admin-notif-empty">Todo al día ✓</div>';
-}
+function sortBy(k){ if(sortKey===k)sortAsc=!sortAsc; else{sortKey=k;sortAsc=true;} renderUsers(); }
 
-// ============================================================
-// USUARIOS
-// ============================================================
-function getAllUsers() {
-  return [...(allData.doctors||[]).map(d=>({...d,_sheet:'doctors'})), ...(allData.clinics||[]).map(c=>({...c,_sheet:'clinics'}))];
-}
+function renderUsers(){
+  const all=getFiltered();
+  const total=all.length;
+  const pages=Math.max(1,Math.ceil(total/PER_PAGE));
+  page=Math.min(page,pages);
+  const slice=all.slice((page-1)*PER_PAGE, page*PER_PAGE);
 
-function renderUsers() {
-  let users = getAllUsers();
-  const search = (document.getElementById('userSearch')||{}).value?.toLowerCase() || '';
-  const tipo = (document.getElementById('userFilterTipo')||{}).value || '';
-  const plan = (document.getElementById('userFilterPlan')||{}).value || '';
-  const status = (document.getElementById('userFilterStatus')||{}).value || '';
-
-  if (search) users = users.filter(u => (u.nombre+u.correo+u.especialidad).toLowerCase().includes(search));
-  if (tipo)   users = users.filter(u => u.tipo === tipo);
-  if (plan)   users = users.filter(u => u.plan === plan);
-  if (status) users = users.filter(u => u.estadoAprobacion === status);
-
-  users.sort((a,b) => {
-    const va = a[usersSortKey]||'', vb = b[usersSortKey]||'';
-    return usersSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
-  });
-
-  const total = users.length;
-  const pages = Math.max(1, Math.ceil(total / usersPerPage));
-  usersPage = Math.min(usersPage, pages);
-  const slice = users.slice((usersPage-1)*usersPerPage, usersPage*usersPerPage);
-
-  const tbody = document.getElementById('usersTableBody');
-  tbody.innerHTML = slice.length ? slice.map(u => `
+  document.getElementById('uBody').innerHTML=slice.length ? slice.map(u=>`
     <tr>
-      <td><input type="checkbox" class="user-check" data-id="${u.id}" data-sheet="${u._sheet}"></td>
-      <td><span class="badge ${u.tipo==='clinica'?'badge-active':'badge-inactive'}">${u.tipo==='clinica'?'Clínica':'Médico'}</span></td>
+      <td><span class="badge ${u.tipo==='clinica'?'b-teal':'b-gray'}">${u.tipo==='clinica'?'Clínica':'Médico'}</span></td>
       <td style="font-weight:600;">${u.nombre}</td>
-      <td>${u.correo}</td>
-      <td>${u.especialidad||u.especialidades||'—'}</td>
-      <td><span class="badge badge-${u.plan||'comunidad'}">${u.plan==='visibilidad'?'Visibilidad':'Comunidad'}</span></td>
-      <td><span class="badge badge-${u.estadoPago==='activo'?'approved':u.estadoPago==='pendiente'?'pending':'rejected'}">${u.estadoPago||'pendiente'}</span></td>
-      <td><span class="badge badge-${u.estadoAprobacion==='aprobado'?'approved':u.estadoAprobacion==='rechazado'?'rejected':'pending'}">${u.estadoAprobacion||'pendiente'}</span></td>
-      <td>${formatDate(u.fechaRegistro)}</td>
+      <td style="font-size:.8rem;">${u.correo}</td>
+      <td style="font-size:.8rem;">${u.especialidad||u.especialidades||'—'}</td>
+      <td><span class="badge ${u.plan==='visibilidad'?'b-copper':'b-gray'}">${u.plan==='visibilidad'?'Visibilidad':'Comunidad'}</span></td>
+      <td><span class="badge ${u.pago==='activo'?'b-ok':u.pago==='vencido'?'b-no':'b-pending'}">${u.pago||'pendiente'}</span></td>
+      <td><span class="badge ${u.aprobacion==='aprobado'?'b-ok':u.aprobacion==='rechazado'?'b-no':'b-pending'}">${u.aprobacion||'pendiente'}</span></td>
+      <td style="font-size:.78rem;">${fDate(u.fechaRegistro)}</td>
       <td>
-        <div class="admin-tbl-actions">
-          <button class="btn btn-xs btn-outline-dark" onclick="viewUser('${u.id}','${u._sheet}')"><i class="fa-solid fa-eye"></i></button>
-          <button class="btn btn-xs btn-copper" onclick="quickApprove('${u.id}','${u._sheet}','aprobado')" title="Aprobar"><i class="fa-solid fa-check"></i></button>
-          <button class="btn btn-xs btn-danger" onclick="quickApprove('${u.id}','${u._sheet}','rechazado')" title="Rechazar"><i class="fa-solid fa-times"></i></button>
+        <div class="actions">
+          <button class="btn btn-sm btn-outline" onclick="viewUser('${u.id}')">👁</button>
+          <button class="btn btn-sm btn-green" onclick="qa('${u.id}','aprobado')">✓</button>
+          <button class="btn btn-sm btn-danger" onclick="qa('${u.id}','rechazado')">✗</button>
         </div>
       </td>
-    </tr>`).join('') : '<tr><td colspan="10" style="text-align:center;padding:32px;color:#8A968F;">Sin resultados</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:28px;color:#8A968F;">Sin resultados</td></tr>';
 
-  // Paginación
-  const pag = document.getElementById('usersPagination');
-  pag.innerHTML = `
-    <button class="admin-page-btn" onclick="changePage(${usersPage-1})" ${usersPage<=1?'disabled':''}>‹</button>
-    ${Array.from({length:pages},(_,i)=>`<button class="admin-page-btn ${i+1===usersPage?'active':''}" onclick="changePage(${i+1})">${i+1}</button>`).join('')}
-    <button class="admin-page-btn" onclick="changePage(${usersPage+1})" ${usersPage>=pages?'disabled':''}>›</button>
-    <span class="admin-page-info">${(usersPage-1)*usersPerPage+1}–${Math.min(usersPage*usersPerPage,total)} de ${total}</span>
-    <select class="tele-filter-select" onchange="usersPerPage=+this.value;usersPage=1;renderUsers()">
-      ${[10,25,50,100].map(n=>`<option ${n===usersPerPage?'selected':''}>${n}</option>`).join('')}
-    </select>`;
-
-  // Header sort
-  document.querySelectorAll('#usersTable th[data-sort]').forEach(th => {
-    th.onclick = () => {
-      if (usersSortKey === th.dataset.sort) usersSortAsc = !usersSortAsc;
-      else { usersSortKey = th.dataset.sort; usersSortAsc = true; }
-      renderUsers();
-    };
-  });
-
-  // Select all
-  document.getElementById('selectAll').onchange = e => {
-    document.querySelectorAll('.user-check').forEach(c => c.checked = e.target.checked);
-  };
+  // paginación
+  const pag=document.getElementById('uPag');
+  pag.innerHTML=`
+    <button class="pag-btn" onclick="gp(${page-1})" ${page<=1?'disabled':''}>‹</button>
+    ${Array.from({length:pages},(_,i)=>`<button class="pag-btn ${i+1===page?'active':''}" onclick="gp(${i+1})">${i+1}</button>`).join('')}
+    <button class="pag-btn" onclick="gp(${page+1})" ${page>=pages?'disabled':''}>›</button>
+    <span class="pag-info">${(page-1)*PER_PAGE+1}–${Math.min(page*PER_PAGE,total)} de ${total}</span>`;
 }
 
-function changePage(p) { usersPage = p; renderUsers(); }
+function gp(p){page=p;renderUsers();}
 
-// Buscar / filtrar
-['userSearch','userFilterTipo','userFilterPlan','userFilterStatus'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', () => { usersPage=1; renderUsers(); });
-});
+function viewUser(id){
+  const u=DB.users.find(x=>x.id===id); if(!u) return;
+  const pub=['nombre','tipo','especialidad','especialidades','descripcion','horarios','costo','plan','foto'];
+  const priv=['correo','whatsapp','cedula','cedulaEsp','rfc','domicilio'];
 
-// Aprobar todos pendientes
-document.getElementById('approveAllBtn').addEventListener('click', async () => {
-  const pending = getAllUsers().filter(u => u.estadoAprobacion === 'pendiente');
-  if (!pending.length) { toast('No hay pendientes.','warning'); return; }
-  if (!confirm(`¿Aprobar ${pending.length} registro${pending.length>1?'s':''}?`)) return;
-  for (const u of pending) await doUpdate(u.id, u._sheet, { estadoAprobacion:'aprobado', activo:'true' });
-  toast(`${pending.length} registros aprobados ✓`);
-  renderUsers(); renderDashboard();
-});
-
-// Exportar CSV
-document.getElementById('exportCSVBtn').addEventListener('click', () => {
-  const users = getAllUsers();
-  const cols = ['id','tipo','nombre','correo','especialidad','plan','estadoPago','estadoAprobacion','fechaRegistro'];
-  const csv = [cols.join(','), ...users.map(u => cols.map(c=>`"${(u[c]||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');
-  download('medifix-usuarios.csv', csv, 'text/csv');
-});
-
-// ============================================================
-// VER / EDITAR USUARIO (MODAL)
-// ============================================================
-function viewUser(id, sheet) {
-  const u = getAllUsers().find(u=>u.id===id);
-  if (!u) return;
-  const sensitiveFields = ['cedula','cedulaEspecialidad','rfc','domicilio','telefono','whatsapp','correo'];
-  const allFields = Object.keys(u).filter(k=>!k.startsWith('_'));
-
-  document.getElementById('modalTitle').textContent = u.nombre;
-  document.getElementById('modalBody').innerHTML = `
-    <div class="admin-detail-grid">
-      ${allFields.filter(k=>!sensitiveFields.includes(k)).map(k=>`
-        <div class="admin-detail-item"><strong>${k}</strong>${u[k]||'—'}</div>
-      `).join('')}
+  document.getElementById('mTitle').textContent=u.nombre;
+  document.getElementById('mBody').innerHTML=`
+    <h4 style="font-size:.82rem;color:#6B7975;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;">Datos públicos</h4>
+    <div class="detail-grid">${pub.filter(k=>u[k]).map(k=>`<div class="detail-item"><strong>${k}</strong>${u[k]}</div>`).join('')}</div>
+    <hr style="margin:16px 0;border:none;border-top:1px solid var(--line);">
+    <h4 style="font-size:.82rem;color:#6B7975;margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;">🔒 Datos confidenciales</h4>
+    <div class="detail-grid">${priv.filter(k=>u[k]).map(k=>`<div class="detail-item"><strong>${k}</strong>${u[k]}</div>`).join('')}</div>
+    <hr style="margin:16px 0;border:none;border-top:1px solid var(--line);">
+    <h4 style="font-size:.88rem;margin-bottom:10px;">Editar estado</h4>
+    <div class="edit-row">
+      <label>Aprobación<select id="eAp">
+        <option ${u.aprobacion==='pendiente'?'selected':''} value="pendiente">Pendiente</option>
+        <option ${u.aprobacion==='aprobado'?'selected':''} value="aprobado">Aprobado</option>
+        <option ${u.aprobacion==='rechazado'?'selected':''} value="rechazado">Rechazado</option>
+      </select></label>
+      <label>Estado pago<select id="ePg">
+        <option ${u.pago==='pendiente'?'selected':''} value="pendiente">Pendiente</option>
+        <option ${u.pago==='activo'?'selected':''} value="activo">Activo</option>
+        <option ${u.pago==='vencido'?'selected':''} value="vencido">Vencido</option>
+      </select></label>
+      <label>Plan<select id="ePl">
+        <option ${u.plan==='comunidad'?'selected':''} value="comunidad">Comunidad ($50)</option>
+        <option ${u.plan==='visibilidad'?'selected':''} value="visibilidad">Visibilidad ($200)</option>
+      </select></label>
     </div>
-    <hr style="margin:20px 0;border:none;border-top:1px solid var(--line);">
-    <h4 style="margin-bottom:14px;font-size:0.9rem;color:#6B7975;">Datos confidenciales (solo visible para administradores)</h4>
-    <div class="admin-detail-grid">
-      ${sensitiveFields.map(k=>`<div class="admin-detail-item"><strong>${k}</strong>${u[k]||'—'}</div>`).join('')}
-    </div>
-    <hr style="margin:20px 0;border:none;border-top:1px solid var(--line);">
-    <h4 style="margin-bottom:14px;font-size:0.9rem;">Editar estado</h4>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-      <label style="font-size:0.85rem;font-weight:600;color:#3A4A50;">Aprobación
-        <select id="editAprobacion" style="display:block;margin-top:4px;padding:8px 12px;border:1px solid var(--line);border-radius:2px;font-family:var(--font-body);">
-          <option ${u.estadoAprobacion==='pendiente'?'selected':''} value="pendiente">Pendiente</option>
-          <option ${u.estadoAprobacion==='aprobado'?'selected':''} value="aprobado">Aprobado</option>
-          <option ${u.estadoAprobacion==='rechazado'?'selected':''} value="rechazado">Rechazado</option>
-        </select>
-      </label>
-      <label style="font-size:0.85rem;font-weight:600;color:#3A4A50;">Estado pago
-        <select id="editPago" style="display:block;margin-top:4px;padding:8px 12px;border:1px solid var(--line);border-radius:2px;font-family:var(--font-body);">
-          <option ${u.estadoPago==='pendiente'?'selected':''} value="pendiente">Pendiente</option>
-          <option ${u.estadoPago==='activo'?'selected':''} value="activo">Activo</option>
-          <option ${u.estadoPago==='vencido'?'selected':''} value="vencido">Vencido</option>
-        </select>
-      </label>
-      <label style="font-size:0.85rem;font-weight:600;color:#3A4A50;">Plan
-        <select id="editPlan" style="display:block;margin-top:4px;padding:8px 12px;border:1px solid var(--line);border-radius:2px;font-family:var(--font-body);">
-          <option ${u.plan==='comunidad'?'selected':''} value="comunidad">Comunidad ($50)</option>
-          <option ${u.plan==='visibilidad'?'selected':''} value="visibilidad">Visibilidad ($200)</option>
-        </select>
-      </label>
-    </div>
-    <label style="display:flex;flex-direction:column;gap:6px;font-size:0.85rem;font-weight:600;color:#3A4A50;margin-top:14px;">Notas internas
-      <textarea id="editNotas" rows="2" style="padding:8px 12px;border:1px solid var(--line);border-radius:2px;font-family:var(--font-body);">${u.notas||''}</textarea>
+    <label style="display:flex;flex-direction:column;gap:5px;font-size:.82rem;font-weight:600;color:#3A4A50;margin-top:12px;">Notas internas
+      <textarea id="eNt" rows="2" style="font-family:inherit;font-size:.86rem;padding:8px 10px;border:1px solid var(--line);border-radius:2px;background:var(--bg);">${u.notas||''}</textarea>
     </label>`;
-
-  document.getElementById('modalFooter').innerHTML = `
-    <button class="btn btn-danger btn-small" onclick="deleteUser('${id}','${sheet}')"><i class="fa-solid fa-trash"></i> Eliminar</button>
-    <button class="btn btn-outline-dark btn-small" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-copper btn-small" onclick="saveUser('${id}','${sheet}')"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios</button>`;
-
+  document.getElementById('mFoot').innerHTML=`
+    <button class="btn btn-sm btn-danger" onclick="delUser('${id}')">🗑 Eliminar</button>
+    <button class="btn btn-sm btn-outline" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-sm btn-copper" onclick="saveUser('${id}')">💾 Guardar</button>`;
   openModal();
 }
 
-async function saveUser(id, sheet) {
-  const updates = {
-    estadoAprobacion: document.getElementById('editAprobacion').value,
-    estadoPago:       document.getElementById('editPago').value,
-    plan:             document.getElementById('editPlan').value,
-    notas:            document.getElementById('editNotas').value,
-    activo:           document.getElementById('editAprobacion').value === 'aprobado' ? 'true' : 'false'
-  };
-  await doUpdate(id, sheet, updates);
-  closeModal();
+function saveUser(id){
+  const u=DB.users.find(x=>x.id===id); if(!u) return;
+  u.aprobacion=document.getElementById('eAp').value;
+  u.pago=document.getElementById('ePg').value;
+  u.plan=document.getElementById('ePl').value;
+  u.notas=document.getElementById('eNt').value;
+  u.activo=u.aprobacion==='aprobado';
+  logActivity('Usuario actualizado', u.nombre);
+  saveDB(); closeModal();
+  renderUsers(); renderDash(); renderSubs();
   toast('Cambios guardados ✓');
-  renderUsers(); renderDashboard();
 }
 
-async function quickApprove(id, sheet, status) {
-  await doUpdate(id, sheet, { estadoAprobacion: status, activo: status==='aprobado'?'true':'false' });
-  toast(status==='aprobado'?'Registro aprobado ✓':'Registro rechazado', status==='rechazado'?'warning':'success');
-  renderUsers(); renderDashboard();
+function qa(id, status){
+  const u=DB.users.find(x=>x.id===id); if(!u) return;
+  u.aprobacion=status;
+  u.activo=status==='aprobado';
+  logActivity(status==='aprobado'?'Aprobado':'Rechazado', u.nombre);
+  saveDB(); renderUsers(); renderDash();
+  toast(status==='aprobado'?'Aprobado ✓':'Rechazado', status==='rechazado'?'warn':'');
 }
 
-async function deleteUser(id, sheet) {
-  if (!confirm('¿Eliminar este registro permanentemente?')) return;
-  try {
-    await apiPost({ action: sheet==='doctors'?'adminDeleteDoctor':'adminDeleteClinic', id });
-    // también en local
-    if (sheet==='doctors') allData.doctors = allData.doctors.filter(d=>d.id!==id);
-    else allData.clinics = allData.clinics.filter(c=>c.id!==id);
-    closeModal(); toast('Registro eliminado'); renderUsers(); renderDashboard();
-  } catch { toast('Error al eliminar','error'); }
+function delUser(id){
+  if(!confirm('¿Eliminar este registro permanentemente?')) return;
+  const u=DB.users.find(x=>x.id===id);
+  DB.users=DB.users.filter(x=>x.id!==id);
+  logActivity('Eliminado', u?.nombre||id);
+  saveDB(); closeModal(); renderUsers(); renderDash();
+  toast('Eliminado');
 }
 
-async function doUpdate(id, sheet, updates) {
-  // Actualiza en memoria
-  const arr = sheet==='doctors' ? allData.doctors : allData.clinics;
-  const idx = arr.findIndex(u=>u.id===id);
-  if (idx>=0) Object.assign(arr[idx], updates);
-  // Envía al servidor
-  try {
-    await apiPost({ action: sheet==='doctors'?'adminUpdateDoctor':'adminUpdateClinic', id, updates });
-  } catch { /* offline mode */ }
+function approveAll(){
+  const pend=DB.users.filter(u=>u.aprobacion==='pendiente');
+  if(!pend.length){toast('No hay pendientes','warn');return;}
+  if(!confirm(`¿Aprobar ${pend.length} registro${pend.length>1?'s':''}?`)) return;
+  pend.forEach(u=>{u.aprobacion='aprobado';u.activo=true;});
+  logActivity('Aprobación masiva', `${pend.length} registros aprobados`);
+  saveDB(); renderUsers(); renderDash();
+  toast(`${pend.length} aprobados ✓`);
 }
 
-// ============================================================
-// ESPECIALIDADES
-// ============================================================
-function renderSpecialties() {
-  const tbody = document.getElementById('specsTableBody');
-  const all = getAllUsers();
-  const specs = allData.specialties || [];
+function exportCSV(){
+  const cols=['tipo','nombre','correo','especialidad','plan','pago','aprobacion','fechaRegistro'];
+  const rows=[cols, ...DB.users.map(u=>cols.map(c=>`"${(u[c]||'').toString().replace(/"/g,'""')}"`))]
+    .map(r=>r.join(',')).join('\n');
+  download('medifix-usuarios.csv',rows,'text/csv');
+}
 
-  tbody.innerHTML = specs.map(s => {
-    const count = all.filter(u => (u.especialidad||u.especialidades||'').includes(s.nombre)).length;
-    return `
-    <tr>
-      <td style="font-size:1.4rem;">${s.icono||'🏥'}</td>
-      <td style="font-weight:600;">${s.nombre}</td>
-      <td><span class="badge ${String(s.activa).toUpperCase()==='TRUE'?'badge-active':'badge-inactive'}">${String(s.activa).toUpperCase()==='TRUE'?'Activa':'Inactiva'}</span></td>
-      <td>${count}</td>
-      <td>
-        <div class="admin-tbl-actions">
-          <button class="btn btn-xs btn-outline-dark" onclick="editSpec('${s.id}','${s.nombre}','${s.icono||''}')"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn btn-xs btn-danger" onclick="deleteSpec('${s.id}')"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </td>
+// ── ESPECIALIDADES ──
+function renderSpecs(){
+  const tbody=document.getElementById('specBody');
+  tbody.innerHTML=SPECS.map(s=>{
+    const cnt=DB.users.filter(u=>(u.especialidad||u.especialidades||'').includes(s.n)).length;
+    return `<tr>
+      <td style="font-size:1.4rem;">${s.i||'🏥'}</td>
+      <td style="font-weight:600;">${s.n}</td>
+      <td>${cnt}</td>
+      <td><div class="actions">
+        <button class="btn btn-sm btn-outline" onclick="editSpec('${s.id}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="delSpec('${s.id}')">🗑</button>
+      </div></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="5" style="text-align:center;padding:32px;color:#8A968F;">Sin especialidades</td></tr>';
+  }).join('')||'<tr><td colspan="4" style="text-align:center;padding:24px;color:#8A968F;">Sin especialidades</td></tr>';
 }
 
-document.getElementById('saveSpecBtn').addEventListener('click', async () => {
-  const name = document.getElementById('specName').value.trim();
-  const icon = document.getElementById('specIcon').value.trim();
-  if (!name) { toast('El nombre es obligatorio','warning'); return; }
-
-  if (editingSpecId) {
-    const spec = allData.specialties.find(s=>s.id===editingSpecId);
-    if (spec) { spec.nombre=name; spec.icono=icon; }
-    try { await apiPost({ action:'adminUpdateSpecialty', id:editingSpecId, updates:{nombre:name,icono:icon} }); } catch {}
-    toast('Especialidad actualizada ✓');
+function saveSpec(){
+  const n=document.getElementById('specName').value.trim();
+  const i=document.getElementById('specIcon').value.trim();
+  if(!n){toast('Nombre obligatorio','warn');return;}
+  if(editSpecId){
+    const s=SPECS.find(x=>x.id===editSpecId); if(s){s.n=n;s.i=i;}
   } else {
-    const newSpec = { id:'esp'+Date.now(), nombre:name, activa:'TRUE', icono:icon||'🏥' };
-    allData.specialties.push(newSpec);
-    try { await apiPost({ action:'adminAddSpecialty', nombre:name, icono:icon||'🏥' }); } catch {}
-    toast('Especialidad agregada ✓');
+    SPECS.push({id:'s'+Date.now(),n,i:i||'🏥'});
   }
-  cancelSpecEdit();
-  renderSpecialties();
-});
-
-function editSpec(id, nombre, icono) {
-  editingSpecId = id;
-  document.getElementById('specName').value = nombre;
-  document.getElementById('specIcon').value = icono;
-  document.getElementById('specFormTitle').textContent = 'Editar especialidad';
+  saveSpecs(); cancelSpec(); renderSpecs();
+  toast(editSpecId?'Especialidad actualizada ✓':'Especialidad agregada ✓');
 }
 
-function cancelSpecEdit() {
-  editingSpecId = null;
-  document.getElementById('specName').value = '';
-  document.getElementById('specIcon').value = '';
-  document.getElementById('specFormTitle').textContent = 'Agregar especialidad';
+function editSpec(id){
+  const s=SPECS.find(x=>x.id===id); if(!s) return;
+  editSpecId=id;
+  document.getElementById('specName').value=s.n;
+  document.getElementById('specIcon').value=s.i||'';
+  document.getElementById('specFTitle').textContent='✏️ Editar especialidad';
 }
 
-document.getElementById('cancelSpecBtn').addEventListener('click', cancelSpecEdit);
-
-async function deleteSpec(id) {
-  if (!confirm('¿Eliminar esta especialidad?')) return;
-  allData.specialties = allData.specialties.filter(s=>s.id!==id);
-  try { await apiPost({ action:'adminDeleteSpecialty', id }); } catch {}
-  renderSpecialties();
-  toast('Especialidad eliminada');
+function cancelSpec(){
+  editSpecId=null;
+  document.getElementById('specName').value='';
+  document.getElementById('specIcon').value='';
+  document.getElementById('specFTitle').textContent='➕ Agregar especialidad';
 }
 
-// ============================================================
-// SUSCRIPCIONES
-// ============================================================
-function renderSubscriptions() {
-  const all = getAllUsers();
-  const vis = all.filter(u=>u.plan==='visibilidad');
-  const com = all.filter(u=>u.plan==='comunidad');
-  const visAct = vis.filter(u=>u.estadoPago==='activo').length;
-  const comAct = com.filter(u=>u.estadoPago==='activo').length;
-  const total = visAct*200 + comAct*50;
+function delSpec(id){
+  if(!confirm('¿Eliminar especialidad?')) return;
+  SPECS=SPECS.filter(s=>s.id!==id);
+  saveSpecs(); renderSpecs(); toast('Especialidad eliminada');
+}
 
-  document.getElementById('subVis').textContent = vis.length;
-  document.getElementById('subVisRev').textContent = `${visAct} activos = $${visAct*200}/mes`;
-  document.getElementById('subCom').textContent = com.length;
-  document.getElementById('subComRev').textContent = `${comAct} activos = $${comAct*50}/mes`;
-  document.getElementById('subTotal').textContent = '$'+total.toLocaleString();
+// ── SUSCRIPCIONES ──
+function renderSubs(){
+  const vis=DB.users.filter(u=>u.plan==='visibilidad');
+  const com=DB.users.filter(u=>u.plan==='comunidad');
+  const vA=vis.filter(u=>u.pago==='activo').length;
+  const cA=com.filter(u=>u.pago==='activo').length;
+  document.getElementById('sVis').textContent=vis.length;
+  document.getElementById('sVisR').textContent=`${vA} activos`;
+  document.getElementById('sCom').textContent=com.length;
+  document.getElementById('sComR').textContent=`${cA} activos`;
+  document.getElementById('sTot').textContent='$'+(vA*200+cA*50).toLocaleString();
 
-  const tbody = document.getElementById('subsTableBody');
-  tbody.innerHTML = all.map(u => `
+  document.getElementById('subBody').innerHTML=DB.users.map(u=>`
     <tr>
       <td style="font-weight:600;">${u.nombre}</td>
       <td>${u.tipo==='clinica'?'Clínica':'Médico'}</td>
-      <td><span class="badge badge-${u.plan||'comunidad'}">${u.plan==='visibilidad'?'Visibilidad $200':'Comunidad $50'}</span></td>
-      <td><span class="badge badge-${u.estadoPago==='activo'?'approved':u.estadoPago==='pendiente'?'pending':'rejected'}">${u.estadoPago||'pendiente'}</span></td>
-      <td>${u.notas||'—'}</td>
-      <td>
-        <div class="admin-tbl-actions">
-          <button class="btn btn-xs btn-copper" onclick="setSubStatus('${u.id}','${u._sheet}','activo')" title="Marcar activo"><i class="fa-solid fa-circle-check"></i></button>
-          <button class="btn btn-xs btn-outline-dark" onclick="setSubStatus('${u.id}','${u._sheet}','pendiente')" title="Marcar pendiente"><i class="fa-solid fa-clock"></i></button>
-          <button class="btn btn-xs btn-danger" onclick="setSubStatus('${u.id}','${u._sheet}','vencido')" title="Marcar vencido"><i class="fa-solid fa-ban"></i></button>
-          <button class="btn btn-xs btn-outline-dark" onclick="togglePlan('${u.id}','${u._sheet}','${u.plan}')" title="Cambiar plan"><i class="fa-solid fa-arrows-rotate"></i></button>
-        </div>
-      </td>
-    </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:#8A968F;">Sin registros</td></tr>';
+      <td><span class="badge ${u.plan==='visibilidad'?'b-copper':'b-gray'}">${u.plan==='visibilidad'?'Visibilidad $200':'Comunidad $50'}</span></td>
+      <td><span class="badge ${u.pago==='activo'?'b-ok':u.pago==='vencido'?'b-no':'b-pending'}">${u.pago||'pendiente'}</span></td>
+      <td style="font-size:.8rem;">${u.notas||'—'}</td>
+      <td><div class="actions">
+        <button class="btn btn-sm btn-green" onclick="setPago('${u.id}','activo')" title="Activo">✓</button>
+        <button class="btn btn-sm btn-outline" onclick="setPago('${u.id}','pendiente')" title="Pendiente">⏳</button>
+        <button class="btn btn-sm btn-danger" onclick="setPago('${u.id}','vencido')" title="Vencido">✗</button>
+        <button class="btn btn-sm btn-outline" onclick="togglePlan('${u.id}')" title="Cambiar plan">⇄</button>
+      </div></td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:24px;color:#8A968F;">Sin registros</td></tr>';
 }
 
-async function setSubStatus(id, sheet, status) {
-  await doUpdate(id, sheet, { estadoPago: status });
-  renderSubscriptions(); renderDashboard();
-  toast('Estado actualizado ✓');
+function setPago(id,st){
+  const u=DB.users.find(x=>x.id===id); if(!u) return;
+  u.pago=st; logActivity('Pago actualizado',`${u.nombre} → ${st}`);
+  saveDB(); renderSubs(); renderDash(); toast('Estado actualizado ✓');
 }
 
-async function togglePlan(id, sheet, currentPlan) {
-  const newPlan = currentPlan==='visibilidad' ? 'comunidad' : 'visibilidad';
-  if (!confirm(`¿Cambiar a plan ${newPlan}?`)) return;
-  await doUpdate(id, sheet, { plan: newPlan });
-  renderSubscriptions(); renderDashboard();
-  toast(`Plan cambiado a ${newPlan} ✓`);
+function togglePlan(id){
+  const u=DB.users.find(x=>x.id===id); if(!u) return;
+  const np=u.plan==='visibilidad'?'comunidad':'visibilidad';
+  if(!confirm(`¿Cambiar a plan ${np}?`)) return;
+  u.plan=np; logActivity('Plan cambiado',`${u.nombre} → ${np}`);
+  saveDB(); renderSubs(); renderDash(); toast(`Plan cambiado a ${np} ✓`);
 }
 
-// ============================================================
-// RESEÑAS
-// ============================================================
-function renderReviews() {
-  const tbody = document.getElementById('reviewsTableBody');
-  const reviews = allData.reviews || [];
-  const all = getAllUsers();
-
-  tbody.innerHTML = reviews.map(r => {
-    const user = all.find(u=>u.id===r.medicoId);
-    const stars = '★'.repeat(+r.calificacion||0) + '☆'.repeat(5-(+r.calificacion||0));
-    return `
-    <tr>
-      <td>${r.pacienteNombre||'Anónimo'}</td>
-      <td>${user?.nombre||r.medicoId||'—'}</td>
-      <td style="color:var(--copper);">${stars} ${r.calificacion||'—'}</td>
-      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.texto||'—'}</td>
-      <td><span class="badge badge-${r.estado==='aprobada'?'approved':r.estado==='rechazada'?'rejected':'pending'}">${r.estado||'pendiente'}</span></td>
-      <td>${formatDate(r.fechaRegistro)}</td>
-      <td>
-        <div class="admin-tbl-actions">
-          <button class="btn btn-xs btn-copper" onclick="updateReview('${r.id}','aprobada')"><i class="fa-solid fa-check"></i></button>
-          <button class="btn btn-xs btn-danger" onclick="updateReview('${r.id}','rechazada')"><i class="fa-solid fa-times"></i></button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:32px;color:#8A968F;">Sin reseñas todavía</td></tr>';
+// ── CONFIGURACIÓN ──
+function changePass(){
+  const np=document.getElementById('newPass').value;
+  const cp=document.getElementById('confPass').value;
+  if(!np){toast('Ingresa contraseña','warn');return;}
+  if(np!==cp){toast('No coinciden','err');return;}
+  localStorage.setItem(PASS_KEY,np);
+  document.getElementById('passMsg').textContent='✓ Contraseña actualizada';
+  toast('Contraseña actualizada ✓');
 }
 
-async function updateReview(id, status) {
-  const r = allData.reviews.find(r=>r.id===id);
-  if (r) r.estado = status;
-  try { await apiPost({ action:'adminUpdateReview', id, updates:{ estado:status } }); } catch {}
-  renderReviews(); updateBell(0, (allData.reviews||[]).filter(r=>r.estado==='pendiente').length);
-  toast(status==='aprobada'?'Reseña aprobada ✓':'Reseña rechazada', status==='rechazada'?'warning':'success');
+function backup(){
+  download('medifix-backup-'+new Date().toISOString().slice(0,10)+'.json',
+    JSON.stringify({users:DB.users,specialties:SPECS},null,2),'application/json');
+  toast('Respaldo descargado ✓');
 }
 
-// ============================================================
-// CONFIGURACIÓN
-// ============================================================
-function initConfig() {
-  const prices = JSON.parse(localStorage.getItem('medifix_tele_prices')||'{"comunidad":50,"visibilidad":200}');
-  document.getElementById('priceCom').value = prices.comunidad;
-  document.getElementById('priceVis').value = prices.visibilidad;
-
-  document.getElementById('savePricesBtn').addEventListener('click', () => {
-    const p = { comunidad: +document.getElementById('priceCom').value, visibilidad: +document.getElementById('priceVis').value };
-    localStorage.setItem('medifix_tele_prices', JSON.stringify(p));
-    document.getElementById('priceStatus').textContent = 'Precios guardados ✓';
-    toast('Precios actualizados ✓');
-  });
-
-  document.getElementById('changePassBtn').addEventListener('click', () => {
-    const np = document.getElementById('newPassInput').value;
-    const cp = document.getElementById('confirmPassInput').value;
-    if (!np) { toast('Ingresa la nueva contraseña','warning'); return; }
-    if (np !== cp) { toast('Las contraseñas no coinciden','error'); return; }
-    localStorage.setItem('medifix_tele_local_pass', np);
-    document.getElementById('passStatus').textContent = 'Contraseña actualizada ✓ (recuerda cambiarla también en appsscript.gs)';
-    toast('Contraseña local actualizada ✓');
-  });
-
-  document.getElementById('backupBtn').addEventListener('click', () => {
-    download('medifix-backup-'+(new Date().toISOString().slice(0,10))+'.json', JSON.stringify(allData, null, 2), 'application/json');
-    toast('Respaldo descargado ✓');
-  });
+function renderCfgActivity(){
+  const el=document.getElementById('cfgActivity');
+  el.innerHTML=DB.activity.slice(0,20).map(a=>`
+    <li class="activity-item">
+      <div class="act-dot">●</div>
+      <div class="act-text"><strong>${a.accion}</strong> — ${a.detalle||''}</div>
+      <span class="act-time">${fDate(a.fecha)}</span>
+    </li>`).join('')||'<li style="padding:14px;color:#8A968F;font-size:.83rem;text-align:center;">Sin actividad</li>';
 }
 
-function renderActivityLog() {
-  const list = document.getElementById('configActivityList');
-  const items = (allData.activity || []).slice(0, 20);
-  list.innerHTML = items.map(a => `
-    <li class="admin-activity-item" style="padding:10px 14px;">
-      <div class="admin-activity-icon" style="width:24px;height:24px;"><i class="fa-solid fa-circle-dot fa-xs"></i></div>
-      <div class="admin-activity-text"><strong>${a.accion}</strong><br><span style="font-size:0.8rem;color:#5C6B70;">${a.detalle||''}</span></div>
-      <span class="admin-activity-time">${formatDate(a.fecha)}</span>
-    </li>`).join('') || '<li style="padding:16px;color:#8A968F;font-size:0.85rem;text-align:center;">Sin actividad</li>';
+// ── MODAL ──
+function openModal(){document.getElementById('overlay').style.display='flex';}
+function closeModal(){document.getElementById('overlay').style.display='none';}
+
+// ── TOAST ──
+function toast(msg,type=''){
+  const el=document.createElement('div');
+  el.className='toast'+(type?' '+type:'');
+  el.textContent=msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
 }
 
-// ============================================================
-// MODAL
-// ============================================================
-function openModal() { document.getElementById('modalOverlay').style.display='flex'; }
-function closeModal() { document.getElementById('modalOverlay').style.display='none'; }
-document.getElementById('modalClose').addEventListener('click', closeModal);
-document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===document.getElementById('modalOverlay')) closeModal(); });
-
-// ============================================================
-// UTILIDADES
-// ============================================================
-function formatDate(str) {
-  if (!str) return '—';
-  try { return new Date(str).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}); }
-  catch { return str; }
+// ── UTILS ──
+function fDate(s){
+  if(!s) return '—';
+  try{return new Date(s).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});}
+  catch{return s;}
 }
 
-function download(filename, text, mime) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([text],{type:mime}));
-  a.download = filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+function download(name,text,mime){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:mime}));
+  a.download=name;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
+
+function goPage(p){
+  document.querySelectorAll('.sb-btn[data-page]').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  const btn=document.querySelector(`.sb-btn[data-page=${p}]`);
+  if(btn){btn.classList.add('active');document.getElementById('topbar-title').textContent=PAGE_TITLES[p]||'';}
+  document.getElementById('page-'+p)?.classList.add('active');
+}
+
+// ── PANEL DE ADMINISTRADOR: AGREGAR ESPECIALISTA MANUALMENTE ──
+// Esto es para cuando alguien envíe su solicitud por WhatsApp y tú quieras agregarla manualmente
+// Puedes hacerlo también entrando a Usuarios → botón ➕
+document.addEventListener('DOMContentLoaded', ()=>{
+  if(sessionStorage.getItem('tele_auth')==='1') init();
+});
+</script>
+</body>
+</html>
+HTMLEOF
+echo "done"
+Output
+
+done
