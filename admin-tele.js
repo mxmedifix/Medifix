@@ -1,6 +1,3 @@
-bash
-
-cat > /home/claude/medifix-site/admin-tele.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="es">
 <head>
