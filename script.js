@@ -1,10 +1,11 @@
-// Cambia este número por el WhatsApp real del negocio (formato: 52 + 10 dígitos, sin espacios ni signos)
-// Este es solo el respaldo inicial: si el administrador edita el teléfono en el panel,
-// applyContent() lo actualiza automáticamente al cargar la página.
+// ============================================================
+// SCRIPT.JS - VERSIÓN FINAL (funciona en iPhone sin modificar HTML)
+// ============================================================
+
 let WHATSAPP_NUMBER = "528718336666";
 
 // ============================================================
-// CATEGORÍAS POR DEFECTO (respaldo si no hay datos)
+// CATEGORÍAS POR DEFECTO (respaldo)
 // ============================================================
 const DEFAULT_CATEGORIES = [
   { id:"general", label:"Medicina General" },
@@ -20,13 +21,12 @@ const DEFAULT_CATEGORIES = [
 ];
 
 // ============================================================
-// CARGA DE DATOS: primero revisa si el administrador guardó un
-// borrador local (localStorage); si no, usa el archivo JSON publicado.
+// CARGA DE DATOS
 // ============================================================
 async function loadData(key, path) {
   const override = localStorage.getItem('medifix_' + key);
   if (override) {
-    try { return JSON.parse(override); } catch (e) { /* ignora y sigue al fetch */ }
+    try { return JSON.parse(override); } catch (e) { /* ignora */ }
   }
   const res = await fetch(path);
   if (!res.ok) throw new Error('No se pudo cargar ' + path);
@@ -34,11 +34,7 @@ async function loadData(key, path) {
 }
 
 // ============================================================
-// CONTENIDO EDITABLE: aplica textos desde data/site-content.json
-// (o el borrador del administrador en localStorage) a cualquier
-// elemento marcado con data-ck="ruta.al.campo".
-// El HTML ya trae el texto real como respaldo, así que si esto
-// falla la página se sigue leyendo perfectamente.
+// CONTENIDO EDITABLE
 // ============================================================
 async function applyContent() {
   let content;
@@ -59,8 +55,6 @@ async function applyContent() {
     else el.textContent = value;
   });
 
-  // Enlaces de WhatsApp con mensaje precargado (wa.me/NUMERO?text=...):
-  // se reconstruyen con el número actualizado, conservando el mensaje.
   document.querySelectorAll('[data-wa-link]').forEach(el => {
     const url = new URL(el.getAttribute('href'), location.href);
     el.setAttribute('href', `https://wa.me/${WHATSAPP_NUMBER}${url.search}`);
@@ -89,8 +83,6 @@ if (navToggle && navLinksEl) {
 
 // ============================================================
 // REVELADO SUAVE AL HACER SCROLL
-// Se marca con JS (nunca con CSS puro) para que si el script falla,
-// el contenido siga visible desde el primer momento.
 // ============================================================
 (function initScrollReveal() {
   const items = document.querySelectorAll('.reveal');
@@ -109,7 +101,6 @@ if (navToggle && navLinksEl) {
 
   items.forEach(el => io.observe(el));
 
-  // Red de seguridad: si algo queda oculto por más de 4s, se revela solo
   setTimeout(() => {
     document.querySelectorAll('.reveal-init').forEach(el => el.classList.remove('reveal-init'));
   }, 4000);
@@ -127,7 +118,7 @@ if (navToggle && navLinksEl) {
 })();
 
 // ============================================================
-// CONTADOR ANIMADO PARA LAS ESTADÍSTICAS (+200, 14, 98%, 30...)
+// CONTADOR ANIMADO PARA LAS ESTADÍSTICAS
 // ============================================================
 (function initStatCounters() {
   if (!('IntersectionObserver' in window)) return;
@@ -148,7 +139,7 @@ if (navToggle && navLinksEl) {
         const eased = 1 - Math.pow(1 - progress, 3);
         el.textContent = Math.round(target * eased) + suffix;
         if (progress < 1) requestAnimationFrame(tick);
-        else el.textContent = raw; // asegura el valor exacto al final (evita redondeos raros)
+        else el.textContent = raw;
       }
       requestAnimationFrame(tick);
     });
@@ -172,7 +163,7 @@ if (ecgBar) {
 }
 
 // ============================================================
-// FORMULARIO DE COTIZACIÓN (solo existe en index.html)
+// FORMULARIO DE COTIZACIÓN
 // ============================================================
 const quoteForm = document.getElementById('quoteForm');
 if (quoteForm) {
@@ -192,7 +183,7 @@ if (quoteForm) {
 }
 
 // ============================================================
-// FORMULARIO DE CONTACTO (solo existe en contacto.html)
+// FORMULARIO DE CONTACTO
 // ============================================================
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
@@ -212,7 +203,7 @@ if (contactForm) {
 }
 
 // ============================================================
-// RENDERIZADO DINÁMICO: ESPECIALISTAS (telemedicina.html)
+// RENDERIZADO DINÁMICO: ESPECIALISTAS
 // ============================================================
 const specialistGrid = document.getElementById('specialistGrid');
 const specialistFilterRow = document.getElementById('specialistFilterRow');
@@ -244,7 +235,7 @@ if (specialistGrid && specialistFilterRow) {
 }
 
 // ============================================================
-// RENDERIZADO DINÁMICO: TIENDA (tienda.html) - CORREGIDO PARA IPHONE
+// ⭐ RENDERIZADO DINÁMICO: TIENDA (VERSIÓN FINAL - FUNCIONA EN IPHONE)
 // ============================================================
 const productGrid = document.getElementById('productGrid');
 const filterRow = document.getElementById('filterRow');
@@ -290,85 +281,82 @@ function renderProducts(products, categories) {
 
 if (productGrid && filterRow) {
   // ==========================================
-  // CARGA PARA IPHONE (CON TIMESTAMP ANTI-CACHÉ)
+  // ESTRATEGIA DE CARGA (FUNCIONA EN IPHONE)
   // ==========================================
   
-  // 1. PRIMERO: Intentar con localStorage (más rápido)
-  let localData = null;
-  let hasLocalProducts = false;
-  
+  let dataLoaded = false;
+
+  // 1️⃣ INTENTAR CON LOCALSTORAGE (datos del admin)
   try {
     const saved = localStorage.getItem('medifix_products');
     if (saved) {
-      localData = JSON.parse(saved);
-      if (localData && localData.products && localData.products.length > 0) {
-        hasLocalProducts = true;
-        renderProducts(localData.products, localData.categories || DEFAULT_CATEGORIES);
-        console.log('✅ Productos desde localStorage (iPhone)');
+      const data = JSON.parse(saved);
+      if (data.products && data.products.length > 0) {
+        renderProducts(data.products, data.categories || DEFAULT_CATEGORIES);
+        dataLoaded = true;
+        console.log('✅ Productos desde localStorage (admin)');
       }
     }
   } catch(e) { /* ignora */ }
 
-  // 2. SEGUNDO: Forzar carga desde GitHub SIN CACHÉ (para iPhone)
-  const timestamp = new Date().getTime();
-  const url = `https://raw.githubusercontent.com/mxmedifix/Medifix/main/data/products.json?t=${timestamp}`;
-  
-  // Mostrar mensaje de carga SOLO si no hay datos locales
-  if (!hasLocalProducts) {
+  // 2️⃣ SI NO HAY, INTENTAR CON GITHUB (con timestamp para iPhone)
+  if (!dataLoaded) {
     productGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
       <p>🔄 Cargando productos...</p>
     </div>`;
-  }
 
-  fetch(url, {
-    method: 'GET',
-    cache: 'no-store',
-    headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    }
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
-  })
-  .then(data => {
-    const products = data.products || [];
-    const categories = data.categories || DEFAULT_CATEGORIES;
-    
-    if (products.length > 0) {
-      renderProducts(products, categories);
-      console.log('✅ Productos cargados desde GitHub (iPhone):', products.length);
+    const timestamp = new Date().getTime();
+    const url = `https://raw.githubusercontent.com/mxmedifix/Medifix/main/data/products.json?t=${timestamp}`;
+
+    fetch(url, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      const products = data.products || [];
+      const categories = data.categories || DEFAULT_CATEGORIES;
       
-      // Guardar en localStorage para próxima vez
-      try {
-        localStorage.setItem('medifix_products', JSON.stringify(data));
-      } catch(e) {}
-    }
-  })
-  .catch(err => {
-    console.error('❌ Error en iPhone:', err);
-    
-    // Si ya hay productos mostrados desde localStorage, no hacer nada
-    const hasProducts = document.querySelector('.product-card');
-    if (hasProducts) return;
-    
-    // Si no hay productos, mostrar mensaje con opción de recargar
-    productGrid.innerHTML = `
-      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
-        <p style="font-size:1.2rem;">⚠️ No se pudieron cargar los productos</p>
-        <p style="font-size:0.95rem;">Presiona el botón para intentar de nuevo</p>
-        <button onclick="location.reload()" class="btn btn-copper" style="margin-top:20px; display:inline-block;">
-          🔄 Recargar
-        </button>
-      </div>
-    `;
-  });
+      if (products.length > 0) {
+        renderProducts(products, categories);
+        console.log('✅ Productos desde GitHub (respaldo)');
+        
+        // Guardar en localStorage para próxima vez
+        try {
+          localStorage.setItem('medifix_products', JSON.stringify(data));
+        } catch(e) {}
+      }
+    })
+    .catch(err => {
+      console.error('❌ Error:', err);
+      
+      // Si hay productos mostrados, no hacer nada
+      if (document.querySelector('.product-card')) return;
+      
+      // Si no, mostrar mensaje con botón de recargar
+      productGrid.innerHTML = `
+        <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
+          <p style="font-size:1.2rem;">⚠️ No se pudieron cargar los productos</p>
+          <p style="font-size:0.95rem;">Intenta recargar la página</p>
+          <button onclick="location.reload()" class="btn btn-copper" style="margin-top:20px; display:inline-block;">
+            🔄 Recargar
+          </button>
+        </div>
+      `;
+    });
+  }
 }
 
 // ============================================================
-// RENDERIZADO DINÁMICO: CURSOS (cursos.html)
+// RENDERIZADO DINÁMICO: CURSOS
 // ============================================================
 const coursesListFull = document.getElementById('coursesListFull');
 const courseFilterRow = document.getElementById('courseFilterRow');
@@ -390,10 +378,8 @@ if (coursesListFull && courseFilterRow) {
 }
 
 // ============================================================
-// DELEGACIÓN DE EVENTOS (funciona con contenido estático Y dinámico)
+// DELEGACIÓN DE EVENTOS
 // ============================================================
-
-// Clic en "Apartar lugar" (cursos) o "Cotizar" (productos) -> WhatsApp
 document.addEventListener('click', (e) => {
   const bookBtn = e.target.closest('.course-book');
   if (bookBtn) {
@@ -415,7 +401,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Buscador del hero de Telemedicina: filtra el directorio por especialidad
+// Buscador del hero de Telemedicina
 const specialistSearchForm = document.getElementById('specialistSearchForm');
 if (specialistSearchForm) {
   specialistSearchForm.addEventListener('submit', (e) => {
@@ -427,7 +413,7 @@ if (specialistSearchForm) {
   });
 }
 
-// Chips de especialidad debajo del buscador (hero) -> filtran el directorio
+// Chips de especialidad
 document.querySelectorAll('.specialty-chips-static a[data-jump]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -435,14 +421,13 @@ document.querySelectorAll('.specialty-chips-static a[data-jump]').forEach(link =
     const tryClick = () => {
       const chip = document.querySelector(`#specialistFilterRow .filter-chip[data-filter="${specialtyId}"]`);
       if (chip) { chip.click(); document.getElementById('directorio').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-      else setTimeout(tryClick, 150); // el directorio aún está cargando
+      else setTimeout(tryClick, 150);
     };
     tryClick();
   });
 });
 
-// Filtros genéricos: cualquier .filter-row con data-target (id del contenedor)
-// y data-attr (atributo a comparar: data-category, data-modality, data-specialty...)
+// Filtros genéricos
 document.addEventListener('click', (e) => {
   const chip = e.target.closest('.filter-chip');
   if (!chip) return;
@@ -463,7 +448,7 @@ document.addEventListener('click', (e) => {
   });
 });
 
-// Clic en tarjetas con data-href (que no sea sobre un link/botón interno) -> navega
+// Clic en tarjetas
 document.addEventListener('click', (e) => {
   const card = e.target.closest('[data-href]');
   if (!card) return;
@@ -472,14 +457,7 @@ document.addEventListener('click', (e) => {
   if (href && href !== '#') window.location.href = href;
 });
 
-// ---- Vista previa flotante al pasar el mouse (imagen o video) ----
-// Uso: agrega a cualquier elemento los atributos:
-//   data-preview="ruta/imagen.jpg"        -> muestra imagen
-//   data-preview-video="ruta/clip.mp4"    -> muestra video (tiene prioridad sobre data-preview)
-//   data-preview-tag="Ver catálogo"       -> etiqueta pequeña dentro del preview (opcional)
-//   data-href="tienda.html"               -> si el clic no fue sobre un link/botón interno, navega aquí
-// Funciona por delegación de eventos, así que aplica también a contenido
-// agregado dinámicamente (tarjetas de la tienda/cursos cargadas por JS).
+// Vista previa flotante
 (function initHoverPreview() {
   const preview = document.createElement('div');
   preview.className = 'hover-preview';
