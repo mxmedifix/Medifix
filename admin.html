@@ -72,25 +72,25 @@
     <p class="admin-status" id="contentStatus"></p>
   </section>
 
-  <!-- ===================== PRODUCTOS ===================== -->
+  <!-- ===================== PRODUCTOS (CORREGIDO) ===================== -->
   <section class="admin-panel-section" id="tab-productos">
 
     <form class="admin-form" id="productForm">
       <h3 id="productFormTitle">Agregar producto</h3>
-      <label>Nombre del producto
-        <input type="text" name="name" required placeholder="Ej. Monitor de signos vitales">
+      <label>Nombre del producto <span style="color:#b91c1c;">*</span>
+        <input type="text" name="name" id="productName" required placeholder="Ej. Monitor de signos vitales">
       </label>
-      <label>Especialidad(es) — marca una o varias
+      <label>Categoría (opcional) — selecciona si aplica
         <div class="check-grid" id="categoryCheckboxes"></div>
       </label>
       <label>Precio (texto libre)
-        <input type="text" name="price" placeholder="Ej. Desde $28,500 MXN">
+        <input type="text" name="price" id="productPrice" placeholder="Ej. Desde $28,500 MXN">
       </label>
       <label>Descripción corta
-        <textarea name="desc" rows="2" placeholder="Ej. ECG, SpO2, PANI, pantalla táctil de 12&quot;"></textarea>
+        <textarea name="desc" id="productDesc" rows="2" placeholder="Ej. ECG, SpO2, PANI, pantalla táctil de 12&quot;"></textarea>
       </label>
       <label>URL de imagen
-        <input type="text" name="img" placeholder="https://...">
+        <input type="text" name="img" id="productImg" placeholder="https://...">
       </label>
       <div class="admin-actions">
         <button type="submit" class="btn btn-copper">Guardar producto</button>
@@ -100,7 +100,7 @@
 
     <div class="admin-table-wrap">
       <table class="admin-table">
-        <thead><tr><th>Producto</th><th>Especialidad</th><th>Precio</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Acciones</th></tr></thead>
         <tbody id="productsTableBody"></tbody>
       </table>
     </div>
@@ -166,14 +166,17 @@
       <label>Especialidad
         <select name="specialtyId" id="specialistSpecialtySelect"></select>
       </label>
+      <label>Teléfono
+        <input type="text" name="phone" placeholder="Ej. 555-123-4567">
+      </label>
       <label>Calificación (0.0 a 5.0)
         <input type="text" name="rating" placeholder="Ej. 4.9">
       </label>
       <label>Número de opiniones
         <input type="text" name="reviewCount" placeholder="Ej. 132">
       </label>
-      <label>Próxima disponibilidad (texto libre)
-        <input type="text" name="nextAvailable" placeholder="Ej. Hoy, 5:30 PM">
+      <label>Disponibilidad (texto libre)
+        <input type="text" name="availabilityNote" placeholder="Ej. Hoy, 5:30 PM">
       </label>
       <label>Descripción corta
         <textarea name="bio" rows="2" placeholder="Ej. Medicina general y seguimiento de padecimientos crónicos."></textarea>
@@ -189,7 +192,7 @@
 
     <div class="admin-table-wrap">
       <table class="admin-table">
-        <thead><tr><th>Nombre</th><th>Especialidad</th><th>Calificación</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Especialidad</th><th>Teléfono</th><th>Calificación</th><th>Acciones</th></tr></thead>
         <tbody id="specialistsTableBody"></tbody>
       </table>
     </div>
