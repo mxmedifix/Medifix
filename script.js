@@ -4,20 +4,6 @@
 let WHATSAPP_NUMBER = "528718336666";
 
 // ============================================================
-// CARGA DE DATOS: primero revisa si el administrador guardó un
-// borrador local (localStorage); si no, usa el archivo JSON publicado.
-// ============================================================
-async function loadData(key, path) {
-  const override = localStorage.getItem('medifix_' + key);
-  if (override) {
-    try { return JSON.parse(override); } catch (e) { /* ignora y sigue al fetch */ }
-  }
-  const res = await fetch(path);
-  if (!res.ok) throw new Error('No se pudo cargar ' + path);
-  return res.json();
-}
-
-// ============================================================
 // CATEGORÍAS POR DEFECTO (respaldo si no hay datos)
 // ============================================================
 const DEFAULT_CATEGORIES = [
@@ -32,6 +18,20 @@ const DEFAULT_CATEGORIES = [
   { id:"nutricion", label:"Nutrición" },
   { id:"psicologia", label:"Psicología" },
 ];
+
+// ============================================================
+// CARGA DE DATOS: primero revisa si el administrador guardó un
+// borrador local (localStorage); si no, usa el archivo JSON publicado.
+// ============================================================
+async function loadData(key, path) {
+  const override = localStorage.getItem('medifix_' + key);
+  if (override) {
+    try { return JSON.parse(override); } catch (e) { /* ignora y sigue al fetch */ }
+  }
+  const res = await fetch(path);
+  if (!res.ok) throw new Error('No se pudo cargar ' + path);
+  return res.json();
+}
 
 // ============================================================
 // CONTENIDO EDITABLE: aplica textos desde data/site-content.json
@@ -244,7 +244,7 @@ if (specialistGrid && specialistFilterRow) {
 }
 
 // ============================================================
-// RENDERIZADO DINÁMICO: TIENDA (tienda.html) - CORREGIDO PARA CELULAR
+// RENDERIZADO DINÁMICO: TIENDA (tienda.html) - CORREGIDO PARA IPHONE
 // ============================================================
 const productGrid = document.getElementById('productGrid');
 const filterRow = document.getElementById('filterRow');
@@ -290,17 +290,39 @@ function renderProducts(products, categories) {
 
 if (productGrid && filterRow) {
   // ==========================================
-  // CARGA DIRECTA DESDE GITHUB (SIN CACHÉ)
+  // CARGA PARA IPHONE (CON TIMESTAMP ANTI-CACHÉ)
   // ==========================================
-  const url = 'https://raw.githubusercontent.com/mxmedifix/Medifix/main/data/products.json';
   
-  // Mostrar mensaje de carga
-  productGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
-    <p>🔄 Cargando productos...</p>
-  </div>`;
+  // 1. PRIMERO: Intentar con localStorage (más rápido)
+  let localData = null;
+  let hasLocalProducts = false;
+  
+  try {
+    const saved = localStorage.getItem('medifix_products');
+    if (saved) {
+      localData = JSON.parse(saved);
+      if (localData && localData.products && localData.products.length > 0) {
+        hasLocalProducts = true;
+        renderProducts(localData.products, localData.categories || DEFAULT_CATEGORIES);
+        console.log('✅ Productos desde localStorage (iPhone)');
+      }
+    }
+  } catch(e) { /* ignora */ }
+
+  // 2. SEGUNDO: Forzar carga desde GitHub SIN CACHÉ (para iPhone)
+  const timestamp = new Date().getTime();
+  const url = `https://raw.githubusercontent.com/mxmedifix/Medifix/main/data/products.json?t=${timestamp}`;
+  
+  // Mostrar mensaje de carga SOLO si no hay datos locales
+  if (!hasLocalProducts) {
+    productGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
+      <p>🔄 Cargando productos...</p>
+    </div>`;
+  }
 
   fetch(url, {
-    cache: 'no-cache',
+    method: 'GET',
+    cache: 'no-store',
     headers: {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
@@ -314,37 +336,32 @@ if (productGrid && filterRow) {
   .then(data => {
     const products = data.products || [];
     const categories = data.categories || DEFAULT_CATEGORIES;
-    renderProducts(products, categories);
-    console.log('✅ Productos cargados:', products.length);
     
-    // Guardar en localStorage para futuras visitas
-    try {
-      localStorage.setItem('medifix_products', JSON.stringify(data));
-    } catch(e) {}
+    if (products.length > 0) {
+      renderProducts(products, categories);
+      console.log('✅ Productos cargados desde GitHub (iPhone):', products.length);
+      
+      // Guardar en localStorage para próxima vez
+      try {
+        localStorage.setItem('medifix_products', JSON.stringify(data));
+      } catch(e) {}
+    }
   })
   .catch(err => {
-    console.error('❌ Error cargando productos:', err);
+    console.error('❌ Error en iPhone:', err);
     
-    // Intentar cargar desde localStorage como respaldo
-    try {
-      const saved = localStorage.getItem('medifix_products');
-      if (saved) {
-        const data = JSON.parse(saved);
-        const products = data.products || [];
-        if (products.length > 0) {
-          renderProducts(products, data.categories || DEFAULT_CATEGORIES);
-          console.log('✅ Productos desde localStorage (respaldo)');
-          return;
-        }
-      }
-    } catch(e) {}
+    // Si ya hay productos mostrados desde localStorage, no hacer nada
+    const hasProducts = document.querySelector('.product-card');
+    if (hasProducts) return;
     
-    // Si todo falla, mostrar mensaje
+    // Si no hay productos, mostrar mensaje con opción de recargar
     productGrid.innerHTML = `
       <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
         <p style="font-size:1.2rem;">⚠️ No se pudieron cargar los productos</p>
-        <p style="font-size:0.95rem;">Intenta recargar la página o contacta al administrador.</p>
-        <a href="contacto.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Contactar</a>
+        <p style="font-size:0.95rem;">Presiona el botón para intentar de nuevo</p>
+        <button onclick="location.reload()" class="btn btn-copper" style="margin-top:20px; display:inline-block;">
+          🔄 Recargar
+        </button>
       </div>
     `;
   });
