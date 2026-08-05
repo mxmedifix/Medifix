@@ -58,10 +58,8 @@
 
 <script>
 // ============================================================
-// CARGA DE PRODUCTOS - SIEMPRE DESDE LOCALSTORAGE
+// CATEGORÍAS POR DEFECTO (solo si no hay datos)
 // ============================================================
-
-// CATEGORÍAS POR DEFECTO (respaldo)
 const DEFAULT_CATEGORIES = [
   { id:"general", label:"Medicina General" },
   { id:"cardiologia", label:"Cardiología" },
@@ -73,127 +71,71 @@ const DEFAULT_CATEGORIES = [
   { id:"odontologia", label:"Odontología" }
 ];
 
-// PRODUCTOS POR DEFECTO (respaldo)
+// PRODUCTOS POR DEFECTO (solo si no hay datos)
 const DEFAULT_PRODUCTS = [
   {
     "id": "p001",
-    "name": "Monitor de signos vitales 5 parámetros",
-    "categories": ["cardiologia", "general"],
-    "price": "Desde $28,500 MXN",
-    "desc": "ECG, SpO2, PANI, temperatura y respiración. Pantalla táctil de 12\".",
-    "img": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=700&q=70"
+    "name": "DERMABOND (0.5 mL)",
+    "categories": ["cirugia"],
+    "price": "$12,554.00 (CAJA DE 12 piezas)",
+    "desc": "Adhesivo cutáneo para cierre de heridas sin puntos",
+    "img": "https://raw.githubusercontent.com/mxmedifix/Medifix/main/img/DERMABOND.JPG"
   },
   {
     "id": "p002",
-    "name": "Ultrasonido portátil doppler color",
-    "categories": ["ginecologia", "diagnostico"],
-    "price": "Desde $86,000 MXN",
-    "desc": "Ideal para consultorio y visitas a domicilio. Batería de 3 horas.",
-    "img": "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?auto=format&fit=crop&w=700&q=70"
+    "name": "DERMABOND ALTA VISCOSIDAD (0.5 mL)",
+    "categories": ["cirugia"],
+    "price": "Consultar precio",
+    "desc": "Adhesivo de alta viscosidad para cierre de heridas",
+    "img": ""
   },
   {
     "id": "p003",
-    "name": "Electrocardiógrafo de 12 canales",
-    "categories": ["cardiologia"],
-    "price": "Desde $19,900 MXN",
-    "desc": "Interpretación automática, impresión térmica y exportación digital.",
-    "img": "https://images.unsplash.com/photo-1666887360742-974c8fce8a99?auto=format&fit=crop&w=700&q=70"
+    "name": "DERMABOND ADVANCED (0.7 mL)",
+    "categories": ["cirugia"],
+    "price": "Consultar precio",
+    "desc": "Adhesivo cutáneo avanzado de alta viscosidad",
+    "img": ""
   },
   {
     "id": "p004",
-    "name": "Autoclave de mesa 24L clase B",
+    "name": "DERMABOND MINI (0.36 mL)",
     "categories": ["cirugia"],
-    "price": "Desde $42,300 MXN",
-    "desc": "Ciclo rápido de esterilización con secado integrado, uso en consultorio.",
-    "img": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=700&q=70"
+    "price": "Consultar precio",
+    "desc": "Adhesivo mini para heridas pequeñas",
+    "img": ""
   },
   {
     "id": "p005",
-    "name": "Mesa quirúrgica hidráulica multiposición",
+    "name": "DERMABOND PRINEO (22 cm)",
     "categories": ["cirugia"],
-    "price": "Cotización según configuración",
-    "desc": "Capacidad 200kg, ajuste de altura y trendelenburg hidráulico.",
-    "img": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=70"
+    "price": "Consultar precio",
+    "desc": "Sistema de cierre cutáneo con malla de 22 cm",
+    "img": ""
   },
   {
     "id": "p006",
-    "name": "Set de instrumental básico de cirugía menor",
-    "categories": ["cirugia", "general"],
-    "price": "Desde $6,750 MXN",
-    "desc": "Acero quirúrgico grado médico, 18 piezas, con estuche de esterilización.",
-    "img": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=700&q=70"
+    "name": "DERMABOND PRINEO (60 cm)",
+    "categories": ["cirugia"],
+    "price": "Consultar precio",
+    "desc": "Sistema de cierre cutáneo con malla de 60 cm",
+    "img": ""
   },
   {
     "id": "p007",
-    "name": "Camilla de exploración eléctrica",
-    "categories": ["general", "ginecologia"],
-    "price": "Desde $15,200 MXN",
-    "desc": "Altura variable, respaldo reclinable, tapiz antibacterial.",
-    "img": "https://images.unsplash.com/photo-1666214280391-8ff5bd3c0bf0?auto=format&fit=crop&w=700&q=70"
+    "name": "SURGICEL Polvo Hemostático (3g)",
+    "categories": ["cirugia"],
+    "price": "Consultar precio",
+    "desc": "Polvo hemostático absorbible antibacteriano",
+    "img": ""
   },
   {
     "id": "p008",
-    "name": "Unidad de fisioterapia combinada",
-    "categories": ["fisioterapia"],
-    "price": "Desde $34,800 MXN",
-    "desc": "Electroestimulación, ultrasonido terapéutico y láser en un solo equipo.",
-    "img": "https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p009",
-    "name": "Mobiliario clínico modular (set completo)",
-    "categories": ["general"],
-    "price": "Cotización según configuración",
-    "desc": "Vitrina, gabinete y superficie de trabajo en acero inoxidable.",
-    "img": "https://images.unsplash.com/photo-1631563018926-483b6f8b7c3a?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p010",
-    "name": "Incubadora neonatal de transporte",
-    "categories": ["pediatria"],
-    "price": "Cotización según configuración",
-    "desc": "Control de temperatura, batería de respaldo y monitoreo integrado.",
-    "img": "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p011",
-    "name": "Báscula pediátrica digital con tallímetro",
-    "categories": ["pediatria", "general"],
-    "price": "Desde $4,200 MXN",
-    "desc": "Precisión de 10g, tallímetro integrado, pantalla de fácil lectura.",
-    "img": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p012",
-    "name": "Unidad dental completa con sillón",
-    "categories": ["odontologia"],
-    "price": "Cotización según configuración",
-    "desc": "Sillón eléctrico, lámpara LED, escupidera y conexión de instrumental.",
-    "img": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p013",
-    "name": "Autoclave dental de mesa 18L",
-    "categories": ["odontologia", "cirugia"],
-    "price": "Desde $38,900 MXN",
-    "desc": "Esterilización clase B para instrumental de uso dental.",
-    "img": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p014",
-    "name": "Equipo de rayos X portátil",
-    "categories": ["diagnostico"],
-    "price": "Cotización según configuración",
-    "desc": "Unidad compacta para consultorio, con panel digital de captura.",
-    "img": "https://images.unsplash.com/photo-1666887360742-974c8fce8a99?auto=format&fit=crop&w=700&q=70"
-  },
-  {
-    "id": "p015",
-    "name": "Doppler fetal portátil",
-    "categories": ["ginecologia"],
-    "price": "Desde $3,800 MXN",
-    "desc": "Detección de frecuencia cardiaca fetal desde la semana 12, altavoz integrado.",
-    "img": "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?auto=format&fit=crop&w=700&q=70"
+    "name": "SURGICEL Malla Hemostática",
+    "categories": ["cirugia"],
+    "price": "Consultar precio",
+    "desc": "Malla de celulosa oxidada para control de sangrado",
+    "img": ""
   }
 ];
 
@@ -227,7 +169,8 @@ function renderProducts(products, categories) {
     productGrid.innerHTML = `
       <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
         <p style="font-size:1.2rem;">🛒 No hay productos disponibles</p>
-        <a href="contacto.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Contactar</a>
+        <p style="font-size:0.95rem;">Agrega productos desde el panel de administración.</p>
+        <a href="admin.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Ir al admin</a>
       </div>
     `;
     return;
@@ -264,37 +207,39 @@ function renderProducts(products, categories) {
 }
 
 // ============================================================
-// CARGA DE DATOS: localStorage primero, GitHub como respaldo
+// ⭐ CARGA DE PRODUCTOS - SIEMPRE DESDE LOCALSTORAGE ⭐
 // ============================================================
 
 function loadProducts() {
-  // 1. Intentar cargar desde localStorage
-  let productsData = null;
-  let categoriesData = null;
-  let dataLoaded = false;
-  
+  // Mostrar carga
+  productGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
+    <p>🔄 Cargando productos...</p>
+  </div>`;
+
+  // 1. INTENTAR CON LOCALSTORAGE (productos del admin)
   try {
     const saved = localStorage.getItem('medifix_products');
     if (saved) {
       const data = JSON.parse(saved);
       if (data.products && data.products.length > 0) {
-        productsData = data.products;
-        categoriesData = data.categories || DEFAULT_CATEGORIES;
-        dataLoaded = true;
-        console.log('✅ Productos desde localStorage');
+        renderProducts(data.products, data.categories || DEFAULT_CATEGORIES);
+        console.log('✅ Productos desde localStorage (admin)');
+        return;
       }
     }
   } catch(e) { /* ignora */ }
+
+  // 2. SI NO HAY EN LOCALSTORAGE, USAR DEFAULT (productos de ejemplo)
+  console.log('📦 Usando productos por defecto');
+  renderProducts(DEFAULT_PRODUCTS, DEFAULT_CATEGORIES);
   
-  // 2. Si no hay en localStorage, usar datos por defecto
-  if (!dataLoaded) {
-    console.log('📦 Usando productos por defecto');
-    productsData = DEFAULT_PRODUCTS;
-    categoriesData = DEFAULT_CATEGORIES;
-  }
-  
-  // 3. Renderizar
-  renderProducts(productsData, categoriesData);
+  // Guardar los productos por defecto en localStorage para que el admin los vea
+  try {
+    localStorage.setItem('medifix_products', JSON.stringify({
+      categories: DEFAULT_CATEGORIES,
+      products: DEFAULT_PRODUCTS
+    }));
+  } catch(e) {}
 }
 
 // Cargar productos al iniciar
@@ -338,9 +283,11 @@ document.addEventListener('click', (e) => {
 });
 
 // ============================================================
-// VISTA PREVIA FLOTANTE
+// VISTA PREVIA FLOTANTE (solo en PC)
 // ============================================================
 (function initHoverPreview() {
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  
   const preview = document.createElement('div');
   preview.className = 'hover-preview';
   preview.innerHTML = `<img alt="" style="display:none">
@@ -366,9 +313,11 @@ document.addEventListener('click', (e) => {
     const imgSrc = target.getAttribute('data-preview');
     const tag = target.getAttribute('data-preview-tag');
 
-    if (imgSrc) {
+    if (imgSrc && imgSrc !== '') {
       imgEl.src = imgSrc;
       imgEl.style.display = 'block';
+    } else {
+      imgEl.style.display = 'none';
     }
 
     if (tag) { tagEl.textContent = tag; tagEl.style.display = 'block'; }
