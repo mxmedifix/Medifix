@@ -244,7 +244,7 @@ if (specialistGrid && specialistFilterRow) {
 }
 
 // ============================================================
-// RENDERIZADO DINÁMICO: TIENDA (tienda.html) - CORREGIDO
+// RENDERIZADO DINÁMICO: TIENDA (tienda.html) - CORREGIDO PARA CELULAR
 // ============================================================
 const productGrid = document.getElementById('productGrid');
 const filterRow = document.getElementById('filterRow');
@@ -253,25 +253,20 @@ function renderProducts(products, categories) {
   if (!products || products.length === 0) {
     productGrid.innerHTML = `
       <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
-        <p style="font-size:1.2rem;">🛒 No hay productos disponibles en este momento</p>
-        <p style="font-size:0.95rem;">Por favor, visita nuestra página más tarde o contáctanos para más información.</p>
+        <p style="font-size:1.2rem;">🛒 No hay productos disponibles</p>
         <a href="contacto.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Contactar</a>
       </div>
     `;
-    filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>`;
     return;
   }
 
-  // Si no hay categorías, usar las de respaldo
   if (!categories || categories.length === 0) {
     categories = DEFAULT_CATEGORIES;
   }
 
-  // Generar filtros
   filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>` +
     categories.map(c => `<button class="filter-chip" data-filter="${c.id}">${c.label}</button>`).join('');
 
-  // Generar productos
   productGrid.innerHTML = products.map(p => {
     const catLabels = p.categories && p.categories.length > 0 
       ? p.categories.map(id => (categories.find(c => c.id === id) || {}).label || id).join(' · ')
@@ -283,7 +278,7 @@ function renderProducts(products, categories) {
         <div class="product-img" style="background-image:url('${p.img || ''}')"></div>
         <div class="product-body">
           <span class="product-cat">${catLabels}</span>
-          <h3>${p.name || 'Producto sin nombre'}</h3>
+          <h3>${p.name || 'Producto'}</h3>
           <p class="product-desc">${p.desc || ''}</p>
           <span class="product-price">${p.price || 'Consultar precio'}</span>
           <button class="btn btn-outline-dark btn-small product-cta" data-product="${p.name || 'Producto'}">Cotizar</button>
@@ -294,61 +289,65 @@ function renderProducts(products, categories) {
 }
 
 if (productGrid && filterRow) {
-  // INTENTAR CARGAR DESDE LOCALSTORAGE PRIMERO (más rápido)
-  let productsData = null;
-  let categoriesData = null;
-  let dataLoaded = false;
+  // ==========================================
+  // CARGA DIRECTA DESDE GITHUB (SIN CACHÉ)
+  // ==========================================
+  const url = 'https://raw.githubusercontent.com/mxmedifix/Medifix/main/data/products.json';
   
-  try {
-    const local = localStorage.getItem('medifix_products');
-    if (local) {
-      const parsed = JSON.parse(local);
-      if (parsed.products && parsed.products.length > 0) {
-        productsData = parsed.products;
-        categoriesData = parsed.categories || DEFAULT_CATEGORIES;
-        dataLoaded = true;
-        console.log('✅ Productos cargados desde localStorage');
-        renderProducts(productsData, categoriesData);
-      }
+  // Mostrar mensaje de carga
+  productGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
+    <p>🔄 Cargando productos...</p>
+  </div>`;
+
+  fetch(url, {
+    cache: 'no-cache',
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     }
-  } catch(e) { /* ignora */ }
-  
-  // SI NO HAY EN LOCALSTORAGE O ESTÁ VACÍO, CARGAR DESDE GITHUB
-  if (!dataLoaded) {
-    console.log('📡 Cargando productos desde GitHub...');
-    loadData('products', 'data/products.json')
-      .then(data => {
-        productsData = data.products || [];
-        categoriesData = data.categories || DEFAULT_CATEGORIES;
-        renderProducts(productsData, categoriesData);
-        console.log('✅ Productos cargados desde GitHub');
-      })
-      .catch(err => {
-        console.error('❌ Error cargando productos:', err);
-        // Último intento: usar datos de respaldo
-        try {
-          const backup = localStorage.getItem('medifix_products_backup');
-          if (backup) {
-            const parsed = JSON.parse(backup);
-            if (parsed.products && parsed.products.length > 0) {
-              renderProducts(parsed.products, parsed.categories || DEFAULT_CATEGORIES);
-              console.log('✅ Productos cargados desde backup');
-              return;
-            }
-          }
-        } catch(e) {}
-        
-        // Si todo falla, mostrar mensaje
-        productGrid.innerHTML = `
-          <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
-            <p style="font-size:1.2rem;">⚠️ No se pudieron cargar los productos</p>
-            <p style="font-size:0.95rem;">Por favor, contacta al administrador o intenta más tarde.</p>
-            <a href="contacto.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Contactar</a>
-          </div>
-        `;
-        filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>`;
-      });
-  }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  })
+  .then(data => {
+    const products = data.products || [];
+    const categories = data.categories || DEFAULT_CATEGORIES;
+    renderProducts(products, categories);
+    console.log('✅ Productos cargados:', products.length);
+    
+    // Guardar en localStorage para futuras visitas
+    try {
+      localStorage.setItem('medifix_products', JSON.stringify(data));
+    } catch(e) {}
+  })
+  .catch(err => {
+    console.error('❌ Error cargando productos:', err);
+    
+    // Intentar cargar desde localStorage como respaldo
+    try {
+      const saved = localStorage.getItem('medifix_products');
+      if (saved) {
+        const data = JSON.parse(saved);
+        const products = data.products || [];
+        if (products.length > 0) {
+          renderProducts(products, data.categories || DEFAULT_CATEGORIES);
+          console.log('✅ Productos desde localStorage (respaldo)');
+          return;
+        }
+      }
+    } catch(e) {}
+    
+    // Si todo falla, mostrar mensaje
+    productGrid.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
+        <p style="font-size:1.2rem;">⚠️ No se pudieron cargar los productos</p>
+        <p style="font-size:0.95rem;">Intenta recargar la página o contacta al administrador.</p>
+        <a href="contacto.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Contactar</a>
+      </div>
+    `;
+  });
 }
 
 // ============================================================
