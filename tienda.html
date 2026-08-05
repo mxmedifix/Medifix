@@ -58,7 +58,7 @@
 
 <script>
 // ============================================================
-// CATEGORÍAS POR DEFECTO (solo si no hay datos)
+// CATEGORÍAS POR DEFECTO
 // ============================================================
 const DEFAULT_CATEGORIES = [
   { id:"general", label:"Medicina General" },
@@ -71,7 +71,7 @@ const DEFAULT_CATEGORIES = [
   { id:"odontologia", label:"Odontología" }
 ];
 
-// PRODUCTOS POR DEFECTO (solo si no hay datos)
+// PRODUCTOS POR DEFECTO (con precio e imagen)
 const DEFAULT_PRODUCTS = [
   {
     "id": "p001",
@@ -190,15 +190,21 @@ function renderProducts(products, categories) {
       ? p.categories.map(id => (categories.find(c => c.id === id) || {}).label || id).join(' · ')
       : 'Sin categoría';
     
+    // Precio: si no tiene, mostrar "Consultar precio"
+    const price = p.price && p.price.trim() !== '' ? p.price : 'Consultar precio';
+    
+    // Imagen: si no tiene, usar una imagen por defecto
+    const imgUrl = p.img && p.img.trim() !== '' ? p.img : 'https://placehold.co/400x300/e8f0fe/1a3a5c?text=Medifix';
+    
     return `
       <article class="product-card" data-category="${p.categories ? p.categories.join(' ') : ''}" 
-               data-preview="${p.img || ''}" data-preview-tag="Cotizar" data-href="#">
-        <div class="product-img" style="background-image:url('${p.img || ''}')"></div>
+               data-preview="${imgUrl}" data-preview-tag="Cotizar" data-href="#">
+        <div class="product-img" style="background-image:url('${imgUrl}'); background-size:cover; background-position:center;"></div>
         <div class="product-body">
           <span class="product-cat">${catLabels}</span>
           <h3>${p.name || 'Producto'}</h3>
           <p class="product-desc">${p.desc || ''}</p>
-          <span class="product-price">${p.price || 'Consultar precio'}</span>
+          <span class="product-price">${price}</span>
           <button class="btn btn-outline-dark btn-small product-cta" data-product="${p.name || 'Producto'}">Cotizar</button>
         </div>
       </article>
@@ -207,7 +213,7 @@ function renderProducts(products, categories) {
 }
 
 // ============================================================
-// ⭐ CARGA DE PRODUCTOS - SIEMPRE DESDE LOCALSTORAGE ⭐
+// ⭐ CARGA DE PRODUCTOS - DESDE LOCALSTORAGE ⭐
 // ============================================================
 
 function loadProducts() {
@@ -229,11 +235,11 @@ function loadProducts() {
     }
   } catch(e) { /* ignora */ }
 
-  // 2. SI NO HAY EN LOCALSTORAGE, USAR DEFAULT (productos de ejemplo)
+  // 2. SI NO HAY EN LOCALSTORAGE, USAR DEFAULT
   console.log('📦 Usando productos por defecto');
   renderProducts(DEFAULT_PRODUCTS, DEFAULT_CATEGORIES);
   
-  // Guardar los productos por defecto en localStorage para que el admin los vea
+  // Guardar los productos por defecto en localStorage
   try {
     localStorage.setItem('medifix_products', JSON.stringify({
       categories: DEFAULT_CATEGORIES,
