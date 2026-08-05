@@ -56,9 +56,333 @@
   </div>
 </footer>
 
-<!-- ========================================== -->
-<!-- CARGA DE SCRIPTS - VERSIÓN CORREGIDA       -->
-<!-- ========================================== -->
-<script src="https://raw.githubusercontent.com/mxmedifix/Medifix/main/script.js"></script>
+<script>
+// ============================================================
+// CARGA DE PRODUCTOS - SIEMPRE DESDE LOCALSTORAGE
+// ============================================================
+
+// CATEGORÍAS POR DEFECTO (respaldo)
+const DEFAULT_CATEGORIES = [
+  { id:"general", label:"Medicina General" },
+  { id:"cardiologia", label:"Cardiología" },
+  { id:"ginecologia", label:"Ginecología y Obstetricia" },
+  { id:"pediatria", label:"Pediatría" },
+  { id:"fisioterapia", label:"Fisioterapia y Rehabilitación" },
+  { id:"cirugia", label:"Cirugía y Esterilización" },
+  { id:"diagnostico", label:"Diagnóstico por Imagen" },
+  { id:"odontologia", label:"Odontología" }
+];
+
+// PRODUCTOS POR DEFECTO (respaldo)
+const DEFAULT_PRODUCTS = [
+  {
+    "id": "p001",
+    "name": "Monitor de signos vitales 5 parámetros",
+    "categories": ["cardiologia", "general"],
+    "price": "Desde $28,500 MXN",
+    "desc": "ECG, SpO2, PANI, temperatura y respiración. Pantalla táctil de 12\".",
+    "img": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p002",
+    "name": "Ultrasonido portátil doppler color",
+    "categories": ["ginecologia", "diagnostico"],
+    "price": "Desde $86,000 MXN",
+    "desc": "Ideal para consultorio y visitas a domicilio. Batería de 3 horas.",
+    "img": "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p003",
+    "name": "Electrocardiógrafo de 12 canales",
+    "categories": ["cardiologia"],
+    "price": "Desde $19,900 MXN",
+    "desc": "Interpretación automática, impresión térmica y exportación digital.",
+    "img": "https://images.unsplash.com/photo-1666887360742-974c8fce8a99?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p004",
+    "name": "Autoclave de mesa 24L clase B",
+    "categories": ["cirugia"],
+    "price": "Desde $42,300 MXN",
+    "desc": "Ciclo rápido de esterilización con secado integrado, uso en consultorio.",
+    "img": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p005",
+    "name": "Mesa quirúrgica hidráulica multiposición",
+    "categories": ["cirugia"],
+    "price": "Cotización según configuración",
+    "desc": "Capacidad 200kg, ajuste de altura y trendelenburg hidráulico.",
+    "img": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p006",
+    "name": "Set de instrumental básico de cirugía menor",
+    "categories": ["cirugia", "general"],
+    "price": "Desde $6,750 MXN",
+    "desc": "Acero quirúrgico grado médico, 18 piezas, con estuche de esterilización.",
+    "img": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p007",
+    "name": "Camilla de exploración eléctrica",
+    "categories": ["general", "ginecologia"],
+    "price": "Desde $15,200 MXN",
+    "desc": "Altura variable, respaldo reclinable, tapiz antibacterial.",
+    "img": "https://images.unsplash.com/photo-1666214280391-8ff5bd3c0bf0?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p008",
+    "name": "Unidad de fisioterapia combinada",
+    "categories": ["fisioterapia"],
+    "price": "Desde $34,800 MXN",
+    "desc": "Electroestimulación, ultrasonido terapéutico y láser en un solo equipo.",
+    "img": "https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p009",
+    "name": "Mobiliario clínico modular (set completo)",
+    "categories": ["general"],
+    "price": "Cotización según configuración",
+    "desc": "Vitrina, gabinete y superficie de trabajo en acero inoxidable.",
+    "img": "https://images.unsplash.com/photo-1631563018926-483b6f8b7c3a?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p010",
+    "name": "Incubadora neonatal de transporte",
+    "categories": ["pediatria"],
+    "price": "Cotización según configuración",
+    "desc": "Control de temperatura, batería de respaldo y monitoreo integrado.",
+    "img": "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p011",
+    "name": "Báscula pediátrica digital con tallímetro",
+    "categories": ["pediatria", "general"],
+    "price": "Desde $4,200 MXN",
+    "desc": "Precisión de 10g, tallímetro integrado, pantalla de fácil lectura.",
+    "img": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p012",
+    "name": "Unidad dental completa con sillón",
+    "categories": ["odontologia"],
+    "price": "Cotización según configuración",
+    "desc": "Sillón eléctrico, lámpara LED, escupidera y conexión de instrumental.",
+    "img": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p013",
+    "name": "Autoclave dental de mesa 18L",
+    "categories": ["odontologia", "cirugia"],
+    "price": "Desde $38,900 MXN",
+    "desc": "Esterilización clase B para instrumental de uso dental.",
+    "img": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p014",
+    "name": "Equipo de rayos X portátil",
+    "categories": ["diagnostico"],
+    "price": "Cotización según configuración",
+    "desc": "Unidad compacta para consultorio, con panel digital de captura.",
+    "img": "https://images.unsplash.com/photo-1666887360742-974c8fce8a99?auto=format&fit=crop&w=700&q=70"
+  },
+  {
+    "id": "p015",
+    "name": "Doppler fetal portátil",
+    "categories": ["ginecologia"],
+    "price": "Desde $3,800 MXN",
+    "desc": "Detección de frecuencia cardiaca fetal desde la semana 12, altavoz integrado.",
+    "img": "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?auto=format&fit=crop&w=700&q=70"
+  }
+];
+
+// ============================================================
+// MENÚ MÓVIL
+// ============================================================
+const navToggle = document.getElementById('navToggle');
+const navLinksEl = document.querySelector('.nav-links');
+if (navToggle && navLinksEl) {
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinksEl.classList.toggle('is-open');
+    navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    navToggle.classList.toggle('is-active', isOpen);
+  });
+  navLinksEl.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinksEl.classList.remove('is-open');
+      navToggle.classList.remove('is-active');
+    });
+  });
+}
+
+// ============================================================
+// RENDERIZAR PRODUCTOS
+// ============================================================
+const productGrid = document.getElementById('productGrid');
+const filterRow = document.getElementById('filterRow');
+
+function renderProducts(products, categories) {
+  if (!products || products.length === 0) {
+    productGrid.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
+        <p style="font-size:1.2rem;">🛒 No hay productos disponibles</p>
+        <a href="contacto.html" class="btn btn-copper" style="margin-top:20px; display:inline-block;">Contactar</a>
+      </div>
+    `;
+    return;
+  }
+
+  if (!categories || categories.length === 0) {
+    categories = DEFAULT_CATEGORIES;
+  }
+
+  // Generar filtros
+  filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>` +
+    categories.map(c => `<button class="filter-chip" data-filter="${c.id}">${c.label}</button>`).join('');
+
+  // Generar productos
+  productGrid.innerHTML = products.map(p => {
+    const catLabels = p.categories && p.categories.length > 0 
+      ? p.categories.map(id => (categories.find(c => c.id === id) || {}).label || id).join(' · ')
+      : 'Sin categoría';
+    
+    return `
+      <article class="product-card" data-category="${p.categories ? p.categories.join(' ') : ''}" 
+               data-preview="${p.img || ''}" data-preview-tag="Cotizar" data-href="#">
+        <div class="product-img" style="background-image:url('${p.img || ''}')"></div>
+        <div class="product-body">
+          <span class="product-cat">${catLabels}</span>
+          <h3>${p.name || 'Producto'}</h3>
+          <p class="product-desc">${p.desc || ''}</p>
+          <span class="product-price">${p.price || 'Consultar precio'}</span>
+          <button class="btn btn-outline-dark btn-small product-cta" data-product="${p.name || 'Producto'}">Cotizar</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// CARGA DE DATOS: localStorage primero, GitHub como respaldo
+// ============================================================
+
+function loadProducts() {
+  // 1. Intentar cargar desde localStorage
+  let productsData = null;
+  let categoriesData = null;
+  let dataLoaded = false;
+  
+  try {
+    const saved = localStorage.getItem('medifix_products');
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.products && data.products.length > 0) {
+        productsData = data.products;
+        categoriesData = data.categories || DEFAULT_CATEGORIES;
+        dataLoaded = true;
+        console.log('✅ Productos desde localStorage');
+      }
+    }
+  } catch(e) { /* ignora */ }
+  
+  // 2. Si no hay en localStorage, usar datos por defecto
+  if (!dataLoaded) {
+    console.log('📦 Usando productos por defecto');
+    productsData = DEFAULT_PRODUCTS;
+    categoriesData = DEFAULT_CATEGORIES;
+  }
+  
+  // 3. Renderizar
+  renderProducts(productsData, categoriesData);
+}
+
+// Cargar productos al iniciar
+loadProducts();
+
+// ============================================================
+// FILTROS
+// ============================================================
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  const row = chip.closest('.filter-row');
+  if (!row) return;
+  const container = document.getElementById(row.dataset.target);
+  const attr = row.dataset.attr;
+  if (!container || !attr) return;
+
+  row.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const filter = chip.getAttribute('data-filter');
+
+  Array.from(container.children).forEach(card => {
+    const value = card.getAttribute(attr) || '';
+    const show = filter === 'todos' || value.split(' ').includes(filter);
+    card.style.display = show ? '' : 'none';
+  });
+});
+
+// ============================================================
+// COTIZAR POR WHATSAPP
+// ============================================================
+const WHATSAPP_NUMBER = "528718336666";
+
+document.addEventListener('click', (e) => {
+  const quoteBtn = e.target.closest('.product-cta');
+  if (quoteBtn) {
+    const product = quoteBtn.getAttribute('data-product');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola Medifix, quiero cotizar: ${product}`)}`, '_blank');
+    return;
+  }
+});
+
+// ============================================================
+// VISTA PREVIA FLOTANTE
+// ============================================================
+(function initHoverPreview() {
+  const preview = document.createElement('div');
+  preview.className = 'hover-preview';
+  preview.innerHTML = `<img alt="" style="display:none">
+                        <span class="hover-preview-tag" style="display:none"></span>`;
+  document.body.appendChild(preview);
+  const imgEl = preview.querySelector('img');
+  const tagEl = preview.querySelector('.hover-preview-tag');
+  let activeEl = null;
+
+  document.addEventListener('mousemove', (e) => {
+    preview.style.left = e.clientX + 'px';
+    preview.style.top = e.clientY + 'px';
+
+    const target = e.target.closest('[data-preview]');
+    if (target === activeEl) return;
+    activeEl = target;
+
+    if (!target) {
+      preview.classList.remove('is-visible');
+      return;
+    }
+
+    const imgSrc = target.getAttribute('data-preview');
+    const tag = target.getAttribute('data-preview-tag');
+
+    if (imgSrc) {
+      imgEl.src = imgSrc;
+      imgEl.style.display = 'block';
+    }
+
+    if (tag) { tagEl.textContent = tag; tagEl.style.display = 'block'; }
+    else { tagEl.style.display = 'none'; }
+
+    preview.classList.add('is-visible');
+  });
+
+  document.addEventListener('mouseleave', () => {
+    preview.classList.remove('is-visible');
+    activeEl = null;
+  });
+})();
+</script>
+
 </body>
 </html>
