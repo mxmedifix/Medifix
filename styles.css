@@ -224,16 +224,75 @@ ul{margin:0;padding:0;list-style:none;}
 .filter-chip:hover{border-color:var(--teal);}
 .filter-chip.active{background:var(--navy); color:var(--white); border-color:var(--navy);}
 
-/* PRODUCT GRID */
+/* ============ PRODUCT GRID - MEJORADO ============ */
 .product-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;}
-.product-card{background:var(--white); border:1px solid var(--line); display:flex; flex-direction:column;}
-.product-img{height:190px; background-size:cover; background-position:center;}
-.product-body{padding:20px; display:flex; flex-direction:column; gap:8px; flex:1;}
-.product-cat{font-family:var(--font-mono); font-size:0.72rem; color:var(--teal); text-transform:uppercase; letter-spacing:0.06em;}
-.product-body h3{font-size:1.08rem;}
-.product-desc{font-size:0.88rem; color:#5C6B70; flex:1;}
-.product-price{font-family:var(--font-mono); font-size:0.95rem; color:var(--copper-dark); font-weight:500;}
-.product-cta{margin-top:8px; width:100%;}
+
+.product-card{
+  background:var(--white); 
+  border:1px solid var(--line); 
+  display:flex; 
+  flex-direction:column; 
+  border-radius:12px; 
+  overflow:hidden; 
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-card:hover{
+  transform:translateY(-6px); 
+  box-shadow:0 12px 30px rgba(11,48,73,0.15);
+}
+
+.product-img{
+  height:220px; 
+  background-size:cover; 
+  background-position:center; 
+  background-color:#f5f6f5; 
+  border-radius:12px 12px 0 0;
+  transition:transform 0.4s ease;
+}
+.product-card:hover .product-img{
+  transform:scale(1.03);
+}
+
+.product-body{
+  flex:1; 
+  display:flex; 
+  flex-direction:column; 
+  text-align:center; 
+  padding:20px 18px;
+}
+.product-body h3{
+  font-size:1rem; 
+  margin-bottom:4px; 
+  flex:1;
+}
+.product-cat{
+  font-size:0.7rem; 
+  text-transform:uppercase; 
+  letter-spacing:0.06em; 
+  color:var(--teal); 
+  margin-bottom:4px;
+}
+.product-desc{
+  font-size:0.85rem; 
+  color:#5C6B70; 
+  display:-webkit-box; 
+  -webkit-line-clamp:2; 
+  -webkit-box-orient:vertical; 
+  overflow:hidden; 
+  flex:1; 
+  margin:6px 0;
+}
+.product-price{
+  font-family:var(--font-mono); 
+  font-size:0.95rem; 
+  color:var(--copper-dark); 
+  font-weight:600; 
+  margin:6px 0;
+}
+.product-cta{
+  margin-top:8px; 
+  width:100%;
+}
 .product-card[hidden]{display:none;}
 
 /* CONTACT PAGE */
@@ -284,6 +343,7 @@ ul{margin:0;padding:0;list-style:none;}
 }
 @media (max-width: 560px){
   .product-grid{grid-template-columns:1fr;}
+  .product-img{height:180px;}
 }
 
 /* focus visibility */
@@ -428,10 +488,10 @@ a:focus-visible, button:focus-visible{outline:2px solid var(--copper); outline-o
 .hero-inner, .hero-ecg{position:relative; z-index:1;}
 
 /* ============ ELEVACIÓN DE TARJETAS ============ */
-.service-card, .catalog-card, .product-card, .value-card, .mv-card{
+.service-card, .catalog-card, .value-card, .mv-card{
   transition:transform .3s cubic-bezier(.16,.8,.3,1), box-shadow .3s cubic-bezier(.16,.8,.3,1), border-color .3s ease;
 }
-.service-card:hover, .catalog-card:hover, .product-card:hover{
+.service-card:hover, .catalog-card:hover{
   transform:translateY(-4px);
   box-shadow:0 20px 40px -18px rgba(11,48,73,0.22);
 }
