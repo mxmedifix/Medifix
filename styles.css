@@ -242,11 +242,11 @@ ul{margin:0;padding:0;list-style:none;}
 }
 
 .product-img{
-  height:220px; 
-  background-size:cover; 
-  background-position:center; 
+  height:220px;
+  background-size:contain;
+  background-position:center;
   background-repeat:no-repeat;
-  background-color:#f5f6f5; 
+  background-color:#f5f6f5;
   border-radius:12px 12px 0 0;
   transition:transform 0.4s ease;
 }
