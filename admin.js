@@ -171,7 +171,7 @@ function renderProductsTable(){
   tbody.innerHTML = productsData.products.map(p=>`
     <tr>
       <td style="font-weight:600;">${esc(p.name)}</td>
-      <td>${p.categories && p.categories.length > 0 ? p.categories.map(id=>(productsData.categories.find(c=>c.id===id)||{}).label||id).join(', ') : 'Sin categoría'}</td> <!-- <--- SOLO CAMBIÉ ESTA LÍNEA (muestra "Sin categoría" si no tiene) -->
+      <td>${p.categories.map(id=>(productsData.categories.find(c=>c.id===id)||{}).label||id).join(', ')}</td>
       <td>${esc(p.price||'—')}</td>
       <td>
         <button type="button" class="btn btn-small btn-outline-dark admin-edit-product" data-id="${p.id}">Editar</button>
@@ -190,9 +190,8 @@ document.getElementById('productForm').addEventListener('submit', e=>{
     alert('El nombre del producto es obligatorio.');
     return;
   }
-  // <--- ELIMINÉ LA LÍNEA QUE FORZABA "general" por defecto
-  // Las categorías son opcionales, se guarda array vacío si no hay selección
-  const finalCats = categories.length > 0 ? categories : []; // <--- SOLO CAMBIÉ ESTA LÍNEA (antes forzaba ['general'])
+  // Si no seleccionó ninguna categoría, usamos "general" por defecto
+  const finalCats = categories.length > 0 ? categories : ['general'];
 
   const id = form.dataset.editId || ('p'+Date.now());
   const obj = { id, name, categories: finalCats, price: form.price.value.trim(), desc: form.desc.value.trim(), img: form.img.value.trim() };
