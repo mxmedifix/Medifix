@@ -30,7 +30,6 @@
 </header>
 
 <main>
-  <!-- Hero -->
   <section class="hero hero-short">
     <div class="hero-inner">
       <h1>Cotizar equipo</h1>
@@ -38,16 +37,10 @@
     </div>
   </section>
 
-  <!-- Filtros y productos -->
   <section class="section">
-    <div class="filter-row" data-target="productGrid" data-attr="data-category" id="filterRow">
-      <!-- Los filtros se generan con JS -->
-    </div>
-    <div class="product-grid" id="productGrid">
-      <!-- Los productos se generan con JS -->
-    </div>
+    <div class="filter-row" data-target="productGrid" data-attr="data-category" id="filterRow"></div>
+    <div class="product-grid" id="productGrid"></div>
   </section>
-
 </main>
 
 <footer class="footer">
@@ -71,7 +64,7 @@ const DEFAULT_CATEGORIES = [
   { id:"odontologia", label:"Odontología" }
 ];
 
-// PRODUCTOS POR DEFECTO (con precio e imagen)
+// ⭐ PRODUCTOS POR DEFECTO (CON EL CPAP YUWELL AGREGADO)
 const DEFAULT_PRODUCTS = [
   {
     "id": "p001",
@@ -136,6 +129,15 @@ const DEFAULT_PRODUCTS = [
     "price": "Consultar precio",
     "desc": "Malla de celulosa oxidada para control de sangrado",
     "img": ""
+  },
+  // ⭐ NUEVO PRODUCTO CPAP YUWELL
+  {
+    "id": "p009",
+    "name": "Equipo CPAP Yuwell YH-350 con Humidificador",
+    "categories": ["general"],
+    "price": "Consultar precio",
+    "desc": "Equipo de presión positiva continua nuevo, completamente equipado y listo para usar. Incluye mascarilla nasal, manguera, humidificador y maletín. Ideal para uso profesional en clínicas y consultorios.",
+    "img": "https://raw.githubusercontent.com/mxmedifix/Medifix/refs/heads/main/CPAP%20Yuwell.JPG"
   }
 ];
 
@@ -180,20 +182,15 @@ function renderProducts(products, categories) {
     categories = DEFAULT_CATEGORIES;
   }
 
-  // Generar filtros
   filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>` +
     categories.map(c => `<button class="filter-chip" data-filter="${c.id}">${c.label}</button>`).join('');
 
-  // Generar productos
   productGrid.innerHTML = products.map(p => {
     const catLabels = p.categories && p.categories.length > 0 
       ? p.categories.map(id => (categories.find(c => c.id === id) || {}).label || id).join(' · ')
       : 'Sin categoría';
     
-    // Precio: si no tiene, mostrar "Consultar precio"
     const price = p.price && p.price.trim() !== '' ? p.price : 'Consultar precio';
-    
-    // Imagen: si no tiene, usar una imagen por defecto
     const imgUrl = p.img && p.img.trim() !== '' ? p.img : 'https://placehold.co/400x300/e8f0fe/1a3a5c?text=Medifix';
     
     return `
@@ -213,16 +210,13 @@ function renderProducts(products, categories) {
 }
 
 // ============================================================
-// ⭐ CARGA DE PRODUCTOS - DESDE LOCALSTORAGE ⭐
+// CARGA DE PRODUCTOS
 // ============================================================
-
 function loadProducts() {
-  // Mostrar carga
   productGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
     <p>🔄 Cargando productos...</p>
   </div>`;
 
-  // 1. INTENTAR CON LOCALSTORAGE (productos del admin)
   try {
     const saved = localStorage.getItem('medifix_products');
     if (saved) {
@@ -233,13 +227,11 @@ function loadProducts() {
         return;
       }
     }
-  } catch(e) { /* ignora */ }
+  } catch(e) {}
 
-  // 2. SI NO HAY EN LOCALSTORAGE, USAR DEFAULT
   console.log('📦 Usando productos por defecto');
   renderProducts(DEFAULT_PRODUCTS, DEFAULT_CATEGORIES);
   
-  // Guardar los productos por defecto en localStorage
   try {
     localStorage.setItem('medifix_products', JSON.stringify({
       categories: DEFAULT_CATEGORIES,
@@ -248,7 +240,6 @@ function loadProducts() {
   } catch(e) {}
 }
 
-// Cargar productos al iniciar
 loadProducts();
 
 // ============================================================
@@ -289,7 +280,7 @@ document.addEventListener('click', (e) => {
 });
 
 // ============================================================
-// VISTA PREVIA FLOTANTE (solo en PC)
+// VISTA PREVIA FLOTANTE
 // ============================================================
 (function initHoverPreview() {
   if (!window.matchMedia('(hover: hover)').matches) return;
