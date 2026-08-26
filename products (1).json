@@ -1,48 +1,70 @@
 {
   "categories": [
     {
-      "id": "general",
-      "label": "Medicina General"
+      "id": "insumos",
+      "name": "Insumos Médicos",
+      "products": [
+        {
+          "id": "1",
+          "name": "CPAP Yuwell",
+          "price": 8500,
+          "image": "CPAP Yuwell.JPG",
+          "description": "Equipo de presión positiva continua para apnea del sueño",
+          "stock": 10
+        },
+        {
+          "id": "2",
+          "name": "Dermabond",
+          "price": 1200,
+          "image": "DERMABOND.JPG",
+          "description": "Adhesivo tisular para cierre de heridas",
+          "stock": 15
+        }
+      ]
     },
     {
-      "id": "cardiologia",
-      "label": "Cardiología"
+      "id": "equipo",
+      "name": "Equipo Médico",
+      "products": [
+        {
+          "id": "3",
+          "name": "Monitor de Signos Vitales",
+          "price": 15000,
+          "image": "monitor.jpg",
+          "description": "Monitor multiparamétrico de signos vitales",
+          "stock": 5
+        },
+        {
+          "id": "4",
+          "name": "Electrocardiógrafo",
+          "price": 22000,
+          "image": "ecg.jpg",
+          "description": "Electrocardiógrafo de 12 derivaciones",
+          "stock": 3
+        }
+      ]
     },
     {
-      "id": "ginecologia",
-      "label": "Ginecología y Obstetricia"
-    },
-    {
-      "id": "pediatria",
-      "label": "Pediatría"
-    },
-    {
-      "id": "fisioterapia",
-      "label": "Fisioterapia y Rehabilitación"
-    },
-    {
-      "id": "cirugia",
-      "label": "Cirugía y Esterilización"
-    },
-    {
-      "id": "diagnostico",
-      "label": "Diagnóstico por Imagen"
-    },
-    {
-      "id": "odontologia",
-      "label": "Odontología"
-    }
-  ],
-  "products": [
-    {
-      "id": "p1786088542677",
-      "name": "Equipo de presión positiva continua (CPAP)",
-      "categories": [
-        "general"
-      ],
-      "price": "$7,000",
-      "desc": "Equipo CPAP Yuwell YH-550 con Humidificador\nEquipo de presión positiva continua nuevo, diseñado para el tratamiento efectivo de la apnea obstructiva del sueño tanto en uso profesional como en el hogar. Entregamos el equipo completamente equipado y listo para usar, incluyendo: la máquina CPAP, humidificador calefactable, tubo corrugado de 1.8 m, mascarilla nasal, fuente de poder y maletín de transporte. Su pantalla LCD a color permite monitorear la terapia en tiempo real, mientras que su sistema de rampa ajustable (0 a 45 min) y su tecnología de alivio espiratorio garantizan una transición cómoda al sueño. Con un funcionamiento ultra silencioso (< 35 dB) y rango de presión de 4 a 20 cmH₂O, el Yuwell YH-350 es la opción ideal para clínicas, hospitales y consultorios que buscan confiabilidad, confort y soporte continuo, respaldado por nuestra garantía de calidad.",
-      "img": "https://raw.githubusercontent.com/mxmedifix/Medifix/refs/heads/main/CPAP%20Yuwell.JPG"
+      "id": "consumibles",
+      "name": "Consumibles",
+      "products": [
+        {
+          "id": "5",
+          "name": "Jeringas 5ml",
+          "price": 150,
+          "image": "jeringas.jpg",
+          "description": "Caja con 100 jeringas estériles de 5ml",
+          "stock": 50
+        },
+        {
+          "id": "6",
+          "name": "Guantes Quirúrgicos",
+          "price": 350,
+          "image": "guantes.jpg",
+          "description": "Caja con 100 pares de guantes estériles talla M",
+          "stock": 30
+        }
+      ]
     }
   ]
 }
