@@ -72,6 +72,8 @@
       font-weight: 600;
       transition: all 0.2s;
       color: #fff;
+      text-decoration: none;
+      display: inline-block;
     }
     .btn-primary {
       background: #0B3049;
@@ -104,6 +106,13 @@
     }
     .btn-outline:hover {
       background: #f0f2f5;
+    }
+    .btn-copper {
+      background: #C0793A;
+      color: #fff;
+    }
+    .btn-copper:hover {
+      background: #a6632b;
     }
     .hidden {
       display: none !important;
@@ -242,6 +251,12 @@
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
+    .alert-info {
+      display: block;
+      background: #cce5ff;
+      color: #004085;
+      border: 1px solid #b8daff;
+    }
     .loading {
       text-align: center;
       padding: 40px;
@@ -252,6 +267,49 @@
       gap: 12px;
       align-items: center;
       flex-wrap: wrap;
+    }
+    .json-box {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 10px;
+      border: 1px solid #333;
+    }
+    .json-box-label {
+      font-weight: 600;
+      color: #0B3049;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .copy-btn {
+      background: #0E6E76;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .copy-btn:hover {
+      background: #0a555c;
+    }
+    .copied-msg {
+      color: #0E6E76;
+      font-size: 13px;
+      margin-left: 10px;
+      display: none;
+    }
+    .copied-msg.show {
+      display: inline;
     }
     @media (max-width: 768px) {
       .producto-item {
@@ -300,10 +358,27 @@
     <div class="toolbar">
       <button class="btn btn-success" onclick="abrirModalAgregar()">➕ Agregar Producto</button>
       <button class="btn btn-primary" onclick="cargarProductos()">🔄 Recargar</button>
+      <button class="btn btn-copper" onclick="mostrarJSON()">📋 Ver JSON para guardar</button>
     </div>
 
     <div id="productos-container">
       <div class="loading">⏳ Cargando productos...</div>
+    </div>
+
+    <!-- Sección para mostrar el JSON -->
+    <div id="json-section" style="display:none; margin-top:30px; border-top:2px solid #DADCD3; padding-top:20px;">
+      <h3 style="color:#0B3049;">📋 Copia este JSON y pégalo en GitHub</h3>
+      <p style="color:#5C6B70; font-size:14px; margin-bottom:10px;">
+        1. Ve a <a href="https://github.com/mxmedifix/Medifix/blob/main/products.json" target="_blank" style="color:#0E6E76; font-weight:600;">products.json en GitHub</a><br>
+        2. Haz clic en el lápiz (✏️) para editar<br>
+        3. Borra TODO el contenido y pega este JSON<br>
+        4. Haz clic en "Commit changes" para guardar
+      </p>
+      <span class="json-box-label">📄 products.json (copia esto):</span>
+      <div class="json-box" id="json-output"></div>
+      <button class="copy-btn" onclick="copiarJSON()">📋 Copiar JSON</button>
+      <span class="copied-msg" id="copied-msg">✅ ¡Copiado!</span>
+      <button class="btn btn-outline" style="margin-top:10px; display:block;" onclick="ocultarJSON()">Cerrar</button>
     </div>
   </div>
 </div>
@@ -330,7 +405,7 @@
           <option value="fisioterapia">Fisioterapia y Rehabilitación</option>
           <option value="cirugia">Cirugía y Esterilización</option>
           <option value="diagnostico">Diagnóstico por Imagen</option>
-          <option value="odontologia">Odontología</option>
+          <option value="odontologia">Laboratorio</option>
         </select>
       </div>
 
@@ -371,6 +446,7 @@
 <script>
 const CONTRASENA = 'medifix2026';
 let productosData = null;
+let productosOriginales = null;
 
 function verificarPassword() {
   const input = document.getElementById('password-input');
@@ -411,8 +487,10 @@ function cargarProductos() {
     })
     .then(data => {
       if (!data || !data.products) throw new Error('Estructura inválida');
-      productosData = data;
+      productosData = JSON.parse(JSON.stringify(data));
+      productosOriginales = JSON.parse(JSON.stringify(data));
       renderProductos(data);
+      mostrarAlerta('✅ Productos cargados correctamente', 'success');
     })
     .catch(error => {
       console.error('Error:', error);
@@ -526,16 +604,19 @@ function guardarProducto(event) {
     } else {
       productosData.products.push(producto);
     }
-    mostrarAlerta('✅ Producto actualizado', 'success');
+    mostrarAlerta('✅ Producto actualizado en memoria', 'success');
   } else {
     productosData.products.push(producto);
-    mostrarAlerta('✅ Producto agregado', 'success');
+    mostrarAlerta('✅ Producto agregado en memoria', 'success');
   }
 
   renderProductos(productosData);
   cerrarModal();
-  console.log('📦 Datos actualizados (copia para products.json):', productosData);
-  localStorage.setItem('medifix_products_backup', JSON.stringify(productosData));
+  
+  // Mostrar el botón para guardar en GitHub
+  document.getElementById('json-section').style.display = 'block';
+  actualizarJSON();
+  mostrarAlerta('📋 Los cambios están en memoria. Haz clic en "Ver JSON para guardar" y luego sube a GitHub.', 'info');
 }
 
 function eliminarProducto(id) {
@@ -545,9 +626,11 @@ function eliminarProducto(id) {
   if (index !== -1) {
     productosData.products.splice(index, 1);
     renderProductos(productosData);
-    mostrarAlerta('🗑️ Producto eliminado', 'success');
-    console.log('📦 Datos actualizados (copia para products.json):', productosData);
-    localStorage.setItem('medifix_products_backup', JSON.stringify(productosData));
+    mostrarAlerta('🗑️ Producto eliminado de memoria', 'success');
+    
+    document.getElementById('json-section').style.display = 'block';
+    actualizarJSON();
+    mostrarAlerta('📋 Los cambios están en memoria. Haz clic en "Ver JSON para guardar" y luego sube a GitHub.', 'info');
   } else {
     mostrarAlerta('Error: Producto no encontrado', 'error');
   }
@@ -561,11 +644,54 @@ function mostrarAlerta(mensaje, tipo) {
   const alert = document.getElementById('alert');
   alert.textContent = mensaje;
   alert.className = 'alert alert-' + tipo;
-  setTimeout(() => { alert.className = 'alert'; }, 4000);
+  setTimeout(() => { alert.className = 'alert'; }, 5000);
+}
+
+function actualizarJSON() {
+  document.getElementById('json-output').textContent = JSON.stringify(productosData, null, 2);
+}
+
+function mostrarJSON() {
+  const section = document.getElementById('json-section');
+  if (section.style.display === 'block') {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  actualizarJSON();
+}
+
+function ocultarJSON() {
+  document.getElementById('json-section').style.display = 'none';
+}
+
+function copiarJSON() {
+  const json = document.getElementById('json-output').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    const msg = document.getElementById('copied-msg');
+    msg.classList.add('show');
+    setTimeout(() => { msg.classList.remove('show'); }, 3000);
+  }).catch(() => {
+    // Fallback para navegadores sin clipboard
+    const textarea = document.createElement('textarea');
+    textarea.value = json;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    const msg = document.getElementById('copied-msg');
+    msg.classList.add('show');
+    setTimeout(() => { msg.classList.remove('show'); }, 3000);
+  });
 }
 
 document.getElementById('modal').addEventListener('click', function(e) {
   if (e.target === this) cerrarModal();
+});
+
+// Tecla ESC para cerrar modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') cerrarModal();
 });
 </script>
 
