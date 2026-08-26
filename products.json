@@ -7,7 +7,7 @@
     { "id": "fisioterapia", "label": "Fisioterapia y Rehabilitación" },
     { "id": "cirugia", "label": "Cirugía y Esterilización" },
     { "id": "diagnostico", "label": "Diagnóstico por Imagen" },
-    { "id": "odontologia", "label": "Odontología" }
+    { "id": "Laboratorio", "label": "Laboratorio" }
   ],
   "products": [
     {
