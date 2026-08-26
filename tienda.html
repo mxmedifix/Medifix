@@ -247,6 +247,12 @@
       padding: 40px;
       color: #8A968F;
     }
+    .admin-top-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
     @media (max-width: 768px) {
       .producto-item {
         flex-direction: column;
@@ -258,6 +264,10 @@
       }
       .form-row {
         grid-template-columns: 1fr;
+      }
+      .admin-top-links {
+        flex-direction: column;
+        align-items: stretch;
       }
     }
   </style>
@@ -278,7 +288,11 @@
   <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
       <h1 style="margin:0; border:none; padding:0;">🛠️ Panel de Administración</h1>
-      <button class="btn btn-outline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+      <div class="admin-top-links">
+        <a href="tienda.html" target="_blank" class="btn btn-warning" style="text-decoration:none;">👁️ Ver Tienda</a>
+        <a href="index.html" target="_blank" class="btn btn-outline" style="text-decoration:none;">🏠 Inicio</a>
+        <button class="btn btn-outline" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+      </div>
     </div>
 
     <div id="alert" class="alert"></div>
@@ -286,7 +300,6 @@
     <div class="toolbar">
       <button class="btn btn-success" onclick="abrirModalAgregar()">➕ Agregar Producto</button>
       <button class="btn btn-primary" onclick="cargarProductos()">🔄 Recargar</button>
-      <a href="tienda.html" target="_blank" class="btn btn-warning">👁️ Ver Tienda</a>
     </div>
 
     <div id="productos-container">
