@@ -9,6 +9,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>
+  .nav-links a.admin-link {
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 12px;
+    border-radius: 4px;
+  }
+  .nav-links a.admin-link:hover {
+    background: rgba(255,255,255,0.1);
+  }
+</style>
 </head>
 <body>
 
@@ -16,13 +26,14 @@
 
 <header class="nav" id="siteNav">
   <div class="nav-inner">
-    <a href="#top" class="brand">Medifix<span class="brand-dot">.</span></a>
+    <a href="index.html" class="brand">Medifix<span class="brand-dot">.</span></a>
     <nav class="nav-links">
       <a href="tienda.html">Tienda</a>
       <a href="cursos.html">Cursos</a>
       <a href="telemedicina.html">Telemedicina</a>
       <a href="nosotros.html">Nosotros</a>
       <a href="contacto.html">Contacto</a>
+      <a href="admin.html" class="admin-link">🔐 Acceso administrador</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
       <span></span><span></span><span></span>
