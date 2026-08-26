@@ -1,574 +1,437 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Medifix</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Estilos específicos del admin */
-        .admin-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-        .admin-header h1 {
-            margin: 0;
-            color: #2c3e50;
-        }
-        .admin-toolbar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            color: white;
-        }
-        .btn-primary { background: #3498db; }
-        .btn-primary:hover { background: #2980b9; }
-        .btn-success { background: #2ecc71; }
-        .btn-success:hover { background: #27ae60; }
-        .btn-warning { background: #f39c12; }
-        .btn-warning:hover { background: #e67e22; }
-        .btn-danger { background: #e74c3c; }
-        .btn-danger:hover { background: #c0392b; }
-        .btn-secondary { background: #95a5a6; }
-        .btn-secondary:hover { background: #7f8c8d; }
-        .btn-dark { background: #2c3e50; }
-        .btn-dark:hover { background: #1a252f; }
-        .btn-small { padding: 6px 12px; font-size: 12px; }
-        
-        /* Login */
-        .login-box {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 40px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            text-align: center;
-        }
-        .login-box h2 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .login-box p {
-            color: #666;
-            margin-bottom: 25px;
-        }
-        .login-box input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-        .login-box input:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-        .login-box .btn {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-        }
-        .login-error {
-            color: #e74c3c;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        /* Productos */
-        .categoria-section {
-            margin-bottom: 30px;
-        }
-        .categoria-title {
-            background: #ecf0f1;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .producto-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-        .producto-item:hover {
-            background: #f0f0f0;
-            border-color: #3498db;
-        }
-        .producto-info {
-            flex: 1;
-        }
-        .producto-info h3 {
-            margin: 0 0 5px 0;
-            color: #2c3e50;
-        }
-        .producto-info p {
-            margin: 3px 0;
-            color: #666;
-            font-size: 14px;
-        }
-        .producto-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .hidden { display: none; }
-        .loading { text-align: center; padding: 40px; color: #666; }
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .alert-success {
-            display: block;
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-error {
-            display: block;
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .modal-header h2 { color: #2c3e50; margin: 0; }
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-        }
-        .modal-close:hover { color: #333; }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
-            font-size: 14px;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .form-group textarea {
-            height: 80px;
-            resize: vertical;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .form-actions .btn { flex: 1; }
-        
-        @media (max-width: 768px) {
-            .producto-item {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .producto-actions {
-                margin-top: 10px;
-                justify-content: flex-end;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .admin-toolbar {
-                flex-direction: column;
-            }
-            .admin-toolbar .btn {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda — Medifix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos adicionales para la tienda */
+    .hero-short {
+      background: linear-gradient(160deg, #0B3049 0%, #0F3E5C 100%);
+      color: #fff;
+      padding: 60px 28px 50px;
+      text-align: center;
+    }
+    .hero-short h1 {
+      font-family: 'Newsreader', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      margin-bottom: 10px;
+    }
+    .hero-short .hero-sub {
+      color: rgba(255,255,255,0.78);
+      max-width: 560px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .product-card {
+      background: #fff;
+      border: 1px solid #DADCD3;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(11,48,73,0.15);
+    }
+    .product-img {
+      height: 220px;
+      background-size: contain !important;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #f5f6f5;
+    }
+    .product-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px 18px;
+    }
+    .product-body h3 {
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+      flex: 1;
+      font-family: 'Newsreader', serif;
+    }
+    .product-cat {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #0E6E76;
+      margin-bottom: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .product-desc {
+      font-size: 0.85rem;
+      color: #5C6B70;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+      margin: 6px 0;
+    }
+    .product-price {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1rem;
+      color: #A6632B;
+      font-weight: 600;
+      margin: 6px 0;
+    }
+    .product-cta {
+      margin-top: 8px;
+      width: 100%;
+    }
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .filter-chip {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      padding: 9px 16px;
+      border: 1px solid #DADCD3;
+      border-radius: 20px;
+      background: #fff;
+      cursor: pointer;
+      color: #142B33;
+      transition: all 0.15s ease;
+    }
+    .filter-chip:hover {
+      border-color: #0E6E76;
+    }
+    .filter-chip.active {
+      background: #0B3049;
+      color: #fff;
+      border-color: #0B3049;
+    }
+    .hover-preview {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      background: #fff;
+      border: 1px solid #DADCD3;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 16px 32px -10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      transform: translate(16px, -50%);
+      max-width: 260px;
+    }
+    .hover-preview.is-visible {
+      opacity: 1;
+    }
+    .hover-preview img {
+      width: 100%;
+      max-height: 160px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+    .hover-preview-tag {
+      display: block;
+      text-align: center;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #0E6E76;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .nav-links.is-open {
+      display: flex !important;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(245,246,243,0.98);
+      backdrop-filter: blur(8px);
+      padding: 20px 28px;
+      border-bottom: 1px solid #DADCD3;
+    }
+    @media (max-width: 860px) {
+      .nav-links {
+        display: none;
+      }
+      .nav-toggle {
+        display: flex !important;
+        flex-direction: column;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .nav-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: #0B3049;
+        transition: all 0.3s ease;
+      }
+      .nav-toggle.is-active span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+      }
+      .nav-toggle.is-active span:nth-child(2) {
+        opacity: 0;
+      }
+      .nav-toggle.is-active span:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- LOGIN -->
-    <div id="login-container" class="login-box">
-        <h2>🔐 Acceso Administrativo</h2>
-        <p>Ingresa la contraseña para gestionar productos</p>
-        <input type="password" id="password-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter') verificarPassword()">
-        <button class="btn btn-primary" onclick="verificarPassword()">Ingresar</button>
-        <div id="login-error" class="login-error">❌ Contraseña incorrecta</div>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">Medifix<span class="brand-dot">.</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Inicio</a>
+      <a href="tienda.html" class="active">Tienda</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="telemedicina.html">Telemedicina</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero-short">
+    <div class="hero-inner">
+      <h1>🛒 Equipamiento médico</h1>
+      <p class="hero-sub">Organizado por especialidad, para que encuentres justo lo que tu área necesita. Cotiza directo por WhatsApp.</p>
     </div>
+  </section>
 
-    <!-- ADMIN PANEL -->
-    <div id="admin-panel" class="hidden">
-        <div class="admin-container">
-            <div class="admin-header">
-                <h1>🛠️ Panel de Administración</h1>
-                <button class="btn btn-secondary" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
-            </div>
-            
-            <div id="alert" class="alert"></div>
-            
-            <div class="admin-toolbar">
-                <button class="btn btn-success" onclick="abrirModalAgregar()">➕ Agregar Producto</button>
-                <button class="btn btn-primary" onclick="cargarProductos()">🔄 Recargar</button>
-                <a href="tienda.html" target="_blank" class="btn btn-dark">👁️ Ver Tienda</a>
-            </div>
+  <section class="section">
+    <div class="filter-row" id="filterRow"></div>
+    <div class="product-grid" id="productGrid">
+      <div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#8A968F;">
+        <p>🔄 Cargando productos...</p>
+      </div>
+    </div>
+  </section>
+</main>
 
-            <div id="productos-container">
-                <div class="loading">⏳ Cargando productos...</div>
-            </div>
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <p class="brand">Medifix<span class="brand-dot">.</span></p>
+      <p>Más que equipos, estrategias para tu rentabilidad médica.</p>
+    </div>
+  </div>
+  <p class="footer-legal">© 2026 Medifix. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+const WHATSAPP_NUMBER = "528718336666";
+
+// ============================================================
+// MENÚ MÓVIL
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  if (toggle && links) {
+    toggle.addEventListener('click', function() {
+      const isOpen = links.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      toggle.classList.toggle('is-active', isOpen);
+    });
+  }
+});
+
+// ============================================================
+// CARGAR Y RENDERIZAR PRODUCTOS
+// ============================================================
+const productGrid = document.getElementById('productGrid');
+const filterRow = document.getElementById('filterRow');
+
+function renderProducts(data) {
+  const products = data.products || [];
+  const categories = data.categories || [];
+
+  if (products.length === 0) {
+    productGrid.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
+        <p style="font-size:1.2rem;">🛒 No hay productos disponibles</p>
+        <p style="font-size:0.95rem;">Agrega productos desde el panel de administración.</p>
+        <a href="admin.html" class="btn btn-copper" style="margin-top:20px; display:inline-block; padding:12px 24px; background:#C0793A; color:#fff; border-radius:4px; text-decoration:none;">Ir al admin</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Generar filtros
+  filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>`;
+  categories.forEach(c => {
+    filterRow.innerHTML += `<button class="filter-chip" data-filter="${c.id}">${c.label}</button>`;
+  });
+
+  // Generar productos
+  productGrid.innerHTML = products.map(p => {
+    const catLabels = p.categories && p.categories.length > 0
+      ? p.categories.map(id => {
+          const found = categories.find(c => c.id === id);
+          return found ? found.label : id;
+        }).join(' · ')
+      : 'Sin categoría';
+
+    const price = p.price && p.price.trim() !== '' ? p.price : 'Consultar precio';
+    const imgUrl = p.img && p.img.trim() !== '' ? p.img : 'https://placehold.co/600x600/f5f6f5/0B3049?text=Medifix';
+
+    return `
+      <article class="product-card" data-category="${(p.categories || []).join(' ')}"
+               data-preview="${imgUrl}" data-preview-tag="Cotizar" data-href="#">
+        <div class="product-img" style="background-image:url('${imgUrl}');"></div>
+        <div class="product-body">
+          <span class="product-cat">${catLabels}</span>
+          <h3>${p.name || 'Producto'}</h3>
+          <p class="product-desc">${p.desc || ''}</p>
+          <span class="product-price">${price}</span>
+          <button class="btn btn-outline-dark btn-small product-cta" data-product="${p.name || 'Producto'}">Cotizar</button>
         </div>
-    </div>
+      </article>
+    `;
+  }).join('');
 
-    <!-- MODAL -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Agregar Producto</h2>
-                <button class="modal-close" onclick="cerrarModal()">&times;</button>
-            </div>
-            
-            <form id="product-form" onsubmit="guardarProducto(event)">
-                <input type="hidden" id="edit-mode" value="false">
-                <input type="hidden" id="product-id" value="">
-                
-                <div class="form-group">
-                    <label>Categoría *</label>
-                    <select id="categoria" required>
-                        <option value="insumos">Insumos Médicos</option>
-                        <option value="equipo">Equipo Médico</option>
-                        <option value="consumibles">Consumibles</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Nombre del Producto *</label>
-                    <input type="text" id="nombre" required placeholder="Ej: CPAP Yuwell">
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Precio *</label>
-                        <input type="number" id="precio" required placeholder="8500" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Stock</label>
-                        <input type="number" id="stock" placeholder="10" min="0">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Imagen (URL o nombre de archivo)</label>
-                    <input type="text" id="imagen" placeholder="CPAP Yuwell.JPG">
-                </div>
-                
-                <div class="form-group">
-                    <label>Descripción</label>
-                    <textarea id="descripcion" placeholder="Descripción del producto..."></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Guardar</button>
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+  // Inicializar filtros
+  initFilters();
+  initHoverPreview();
+}
 
-    <script>
-        // ============================================
-        // ADMIN.JS - Código completo con contraseña
-        // ============================================
-        
-        // 🔑 CONTRASEÑA CORRECTA
-        const CONTRASENA = 'medifix2026';
-        let productosData = null;
-        let sessionActiva = false;
+// ============================================================
+// FILTROS
+// ============================================================
+function initFilters() {
+  const chips = filterRow.querySelectorAll('.filter-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', function() {
+      chips.forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
 
-        // ============ LOGIN ============
-        function verificarPassword() {
-            const input = document.getElementById('password-input');
-            const error = document.getElementById('login-error');
-            
-            if (input.value === CONTRASENA) {
-                sessionActiva = true;
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('admin-panel').classList.remove('hidden');
-                cargarProductos();
-                error.style.display = 'none';
-                input.value = '';
-            } else {
-                error.style.display = 'block';
-                input.value = '';
-                input.focus();
-            }
-        }
+      const filter = this.getAttribute('data-filter');
+      const cards = productGrid.querySelectorAll('.product-card');
 
-        function cerrarSesion() {
-            sessionActiva = false;
-            document.getElementById('login-container').style.display = 'block';
-            document.getElementById('admin-panel').classList.add('hidden');
-            document.getElementById('password-input').value = '';
-            document.getElementById('password-input').focus();
-        }
+      cards.forEach(card => {
+        const categories = card.getAttribute('data-category') || '';
+        const show = filter === 'todos' || categories.split(' ').includes(filter);
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+}
 
-        // Enter para login
-        document.getElementById('password-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') verificarPassword();
-        });
+// ============================================================
+// VISTA PREVIA FLOTANTE
+// ============================================================
+function initHoverPreview() {
+  if (!window.matchMedia('(hover: hover)').matches) return;
 
-        // ============ CRUD PRODUCTOS ============
-        
-        function cargarProductos() {
-            const container = document.getElementById('productos-container');
-            container.innerHTML = '<div class="loading">⏳ Cargando productos...</div>';
-            
-            fetch('products.json')
-                .then(response => {
-                    if (!response.ok) throw new Error('Error HTTP: ' + response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    if (!data || !data.categories) throw new Error('Estructura inválida');
-                    productosData = data;
-                    renderProductos(data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    container.innerHTML = `
-                        <div style="text-align:center;padding:40px;background:#f8d7da;border-radius:8px;color:#721c24;">
-                            ❌ Error al cargar productos<br>
-                            <small>${error.message}</small>
-                            <br><br>
-                            <button class="btn btn-primary" onclick="cargarProductos()">Intentar de nuevo</button>
-                        </div>
-                    `;
-                });
-        }
+  const preview = document.createElement('div');
+  preview.className = 'hover-preview';
+  preview.innerHTML = `<img alt="" style="display:none;">
+                        <span class="hover-preview-tag" style="display:none;"></span>`;
+  document.body.appendChild(preview);
+  const imgEl = preview.querySelector('img');
+  const tagEl = preview.querySelector('.hover-preview-tag');
+  let activeEl = null;
 
-        function renderProductos(data) {
-            const container = document.getElementById('productos-container');
-            let html = '';
-            
-            data.categories.forEach(categoria => {
-                if (!categoria.products || categoria.products.length === 0) return;
-                
-                html += `<div class="categoria-section">
-                    <div class="categoria-title">📁 ${categoria.name}</div>
-                `;
-                
-                categoria.products.forEach(producto => {
-                    html += `
-                        <div class="producto-item">
-                            <div class="producto-info">
-                                <h3>${producto.name}</h3>
-                                <p>💰 $${producto.price} | 📦 Stock: ${producto.stock || 0}</p>
-                                <p style="font-size:13px;color:#888;">${producto.description || 'Sin descripción'}</p>
-                            </div>
-                            <div class="producto-actions">
-                                <button class="btn btn-warning btn-small" onclick="editarProducto('${producto.id}')">✏️</button>
-                                <button class="btn btn-danger btn-small" onclick="eliminarProducto('${producto.id}')">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                html += '</div>';
-            });
-            
-            container.innerHTML = html || '<p class="loading">No hay productos disponibles</p>';
-        }
+  document.addEventListener('mousemove', (e) => {
+    const target = e.target.closest('[data-preview]');
+    if (target === activeEl) return;
+    activeEl = target;
 
-        function abrirModalAgregar() {
-            document.getElementById('modal-title').textContent = '➕ Agregar Producto';
-            document.getElementById('edit-mode').value = 'false';
-            document.getElementById('product-id').value = '';
-            document.getElementById('product-form').reset();
-            document.getElementById('modal').classList.add('active');
-        }
+    if (!target) {
+      preview.classList.remove('is-visible');
+      return;
+    }
 
-        function editarProducto(id) {
-            let productoEncontrado = null;
-            let categoriaEncontrada = null;
-            
-            for (let categoria of productosData.categories) {
-                const producto = categoria.products.find(p => p.id === id);
-                if (producto) {
-                    productoEncontrado = producto;
-                    categoriaEncontrada = categoria;
-                    break;
-                }
-            }
-            
-            if (!productoEncontrado) {
-                mostrarAlerta('Producto no encontrado', 'error');
-                return;
-            }
-            
-            document.getElementById('modal-title').textContent = '✏️ Editar Producto';
-            document.getElementById('edit-mode').value = 'true';
-            document.getElementById('product-id').value = id;
-            document.getElementById('categoria').value = categoriaEncontrada.id;
-            document.getElementById('nombre').value = productoEncontrado.name;
-            document.getElementById('precio').value = productoEncontrado.price;
-            document.getElementById('stock').value = productoEncontrado.stock || '';
-            document.getElementById('imagen').value = productoEncontrado.image || '';
-            document.getElementById('descripcion').value = productoEncontrado.description || '';
-            
-            document.getElementById('modal').classList.add('active');
-        }
+    const imgSrc = target.getAttribute('data-preview');
+    const tag = target.getAttribute('data-preview-tag');
 
-        function guardarProducto(event) {
-            event.preventDefault();
-            
-            const modoEdicion = document.getElementById('edit-mode').value === 'true';
-            const id = document.getElementById('product-id').value || Date.now().toString();
-            const categoriaId = document.getElementById('categoria').value;
-            const nombre = document.getElementById('nombre').value.trim();
-            const precio = parseFloat(document.getElementById('precio').value);
-            const stock = parseInt(document.getElementById('stock').value) || 0;
-            const imagen = document.getElementById('imagen').value.trim() || 'https://via.placeholder.com/300x200/cccccc/666666?text=Sin+Imagen';
-            const descripcion = document.getElementById('descripcion').value.trim();
-            
-            if (!nombre || isNaN(precio) || precio <= 0) {
-                mostrarAlerta('Completa todos los campos obligatorios', 'error');
-                return;
-            }
-            
-            const producto = { id, name: nombre, price: precio, image: imagen, description: descripcion, stock };
-            
-            if (modoEdicion) {
-                let encontrado = false;
-                for (let categoria of productosData.categories) {
-                    const index = categoria.products.findIndex(p => p.id === id);
-                    if (index !== -1) {
-                        categoria.products[index] = producto;
-                        encontrado = true;
-                        break;
-                    }
-                }
-                if (!encontrado) {
-                    const categoria = productosData.categories.find(c => c.id === categoriaId);
-                    if (categoria) categoria.products.push(producto);
-                }
-                mostrarAlerta('✅ Producto actualizado', 'success');
-            } else {
-                const categoria = productosData.categories.find(c => c.id === categoriaId);
-                if (categoria) {
-                    categoria.products.push(producto);
-                    mostrarAlerta('✅ Producto agregado', 'success');
-                } else {
-                    mostrarAlerta('Error: Categoría no encontrada', 'error');
-                    return;
-                }
-            }
-            
-            renderProductos(productosData);
-            cerrarModal();
-            console.log('📦 Datos actualizados:', productosData);
-        }
+    if (imgSrc && imgSrc !== '') {
+      imgEl.src = imgSrc;
+      imgEl.style.display = 'block';
+    } else {
+      imgEl.style.display = 'none';
+    }
 
-        function eliminarProducto(id) {
-            if (!confirm('¿Eliminar este producto?')) return;
-            
-            for (let categoria of productosData.categories) {
-                const index = categoria.products.findIndex(p => p.id === id);
-                if (index !== -1) {
-                    categoria.products.splice(index, 1);
-                    renderProductos(productosData);
-                    mostrarAlerta('🗑️ Producto eliminado', 'success');
-                    return;
-                }
-            }
-            mostrarAlerta('Error: Producto no encontrado', 'error');
-        }
+    if (tag) {
+      tagEl.textContent = tag;
+      tagEl.style.display = 'block';
+    } else {
+      tagEl.style.display = 'none';
+    }
 
-        function cerrarModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
+    preview.classList.add('is-visible');
+    preview.style.left = (e.clientX + 16) + 'px';
+    preview.style.top = e.clientY + 'px';
+  });
 
-        function mostrarAlerta(mensaje, tipo) {
-            const alert = document.getElementById('alert');
-            alert.textContent = mensaje;
-            alert.className = 'alert alert-' + tipo;
-            setTimeout(() => { alert.className = 'alert'; }, 4000);
-        }
+  document.addEventListener('mouseleave', () => {
+    preview.classList.remove('is-visible');
+    activeEl = null;
+  });
+}
 
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) cerrarModal();
-        });
-    </script>
+// ============================================================
+// COTIZAR POR WHATSAPP
+// ============================================================
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.product-cta');
+  if (btn) {
+    const product = btn.getAttribute('data-product');
+    if (product) {
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola Medifix, quiero cotizar: ' + product)}`, '_blank');
+    }
+  }
+});
+
+// ============================================================
+// CARGA INICIAL
+// ============================================================
+fetch('products.json')
+  .then(response => {
+    if (!response.ok) throw new Error('No se pudo cargar products.json');
+    return response.json();
+  })
+  .then(data => {
+    renderProducts(data);
+    console.log('✅ Productos cargados correctamente');
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    productGrid.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#8A968F;">
+        <p style="font-size:1.2rem;">⚠️ Error al cargar productos</p>
+        <p style="font-size:0.95rem;">${error.message}</p>
+        <button onclick="location.reload()" style="margin-top:16px; padding:10px 24px; background:#0B3049; color:#fff; border:none; border-radius:4px; cursor:pointer;">Intentar de nuevo</button>
+      </div>
+    `;
+  });
+</script>
 </body>
 </html>
