@@ -369,14 +369,9 @@
 </div>
 
 <script>
-// ============================================================
-// ADMIN.JS - COMPLETO Y FUNCIONAL
-// ============================================================
-
 const CONTRASENA = 'medifix2026';
 let productosData = null;
 
-// ============ LOGIN ============
 function verificarPassword() {
   const input = document.getElementById('password-input');
   const error = document.getElementById('login-error');
@@ -404,8 +399,6 @@ function cerrarSesion() {
   document.getElementById('password-input').value = '';
   document.getElementById('password-input').focus();
 }
-
-// ============ CRUD PRODUCTOS ============
 
 function cargarProductos() {
   const container = document.getElementById('productos-container');
@@ -542,8 +535,6 @@ function guardarProducto(event) {
   renderProductos(productosData);
   cerrarModal();
   console.log('📦 Datos actualizados (copia para products.json):', productosData);
-
-  // Guardar en localStorage como respaldo
   localStorage.setItem('medifix_products_backup', JSON.stringify(productosData));
 }
 
