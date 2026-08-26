@@ -5,328 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Medifix</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f2f5;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-    h1 {
-      color: #0B3049;
-      border-bottom: 3px solid #C0793A;
-      padding-bottom: 12px;
-      margin-bottom: 24px;
-    }
-    .login-box {
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 40px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-      text-align: center;
-    }
-    .login-box h2 {
-      margin-bottom: 10px;
-      color: #0B3049;
-    }
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #DADCD3;
-      border-radius: 6px;
-      font-size: 16px;
-      margin: 12px 0;
-    }
-    .login-box input:focus {
-      border-color: #0E6E76;
-      outline: none;
-    }
-    .login-box .btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-    }
-    .login-error {
-      color: #B33A3A;
-      margin-top: 10px;
-      display: none;
-    }
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-      color: #fff;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .btn-primary {
-      background: #0B3049;
-    }
-    .btn-primary:hover {
-      background: #1a4a6a;
-    }
-    .btn-success {
-      background: #0E6E76;
-    }
-    .btn-success:hover {
-      background: #0a555c;
-    }
-    .btn-danger {
-      background: #B33A3A;
-    }
-    .btn-danger:hover {
-      background: #8f2e2e;
-    }
-    .btn-warning {
-      background: #C0793A;
-    }
-    .btn-warning:hover {
-      background: #a6632b;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #DADCD3;
-      color: #142B33;
-    }
-    .btn-outline:hover {
-      background: #f0f2f5;
-    }
-    .btn-copper {
-      background: #C0793A;
-      color: #fff;
-    }
-    .btn-copper:hover {
-      background: #a6632b;
-    }
-    .hidden {
-      display: none !important;
-    }
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-    .producto-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f8f9f8;
-      border: 1px solid #DADCD3;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 10px;
-      transition: all 0.2s;
-    }
-    .producto-item:hover {
-      background: #f0f2f5;
-      border-color: #0E6E76;
-    }
-    .producto-info {
-      flex: 1;
-    }
-    .producto-info h3 {
-      margin-bottom: 4px;
-      color: #0B3049;
-    }
-    .producto-info p {
-      color: #5C6B70;
-      font-size: 0.9rem;
-      margin: 2px 0;
-    }
-    .producto-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .modal-header h2 {
-      color: #0B3049;
-    }
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 28px;
-      cursor: pointer;
-      color: #999;
-    }
-    .modal-close:hover {
-      color: #333;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #142B33;
-      font-size: 0.9rem;
-    }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #DADCD3;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-    .form-group textarea {
-      height: 80px;
-      resize: vertical;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .form-actions .btn {
-      flex: 1;
-    }
-    .alert {
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      display: none;
-    }
-    .alert-success {
-      display: block;
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .alert-error {
-      display: block;
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .alert-info {
-      display: block;
-      background: #cce5ff;
-      color: #004085;
-      border: 1px solid #b8daff;
-    }
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #8A968F;
-    }
-    .admin-top-links {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .json-box {
-      background: #1e1e1e;
-      color: #d4d4d4;
-      padding: 20px;
-      border-radius: 8px;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      max-height: 400px;
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-      margin-top: 10px;
-      border: 1px solid #333;
-    }
-    .json-box-label {
-      font-weight: 600;
-      color: #0B3049;
-      margin-top: 16px;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .copy-btn {
-      background: #0E6E76;
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-      margin-top: 8px;
-    }
-    .copy-btn:hover {
-      background: #0a555c;
-    }
-    .copied-msg {
-      color: #0E6E76;
-      font-size: 13px;
-      margin-left: 10px;
-      display: none;
-    }
-    .copied-msg.show {
-      display: inline;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+    h1 { color: #0B3049; border-bottom: 3px solid #C0793A; padding-bottom: 12px; margin-bottom: 24px; }
+    .login-box { max-width: 400px; margin: 100px auto; padding: 40px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); text-align: center; }
+    .login-box h2 { margin-bottom: 10px; color: #0B3049; }
+    .login-box input { width: 100%; padding: 12px; border: 2px solid #DADCD3; border-radius: 6px; font-size: 16px; margin: 12px 0; }
+    .login-box input:focus { border-color: #0E6E76; outline: none; }
+    .login-box .btn { width: 100%; padding: 12px; font-size: 16px; }
+    .login-error { color: #B33A3A; margin-top: 10px; display: none; }
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; color: #fff; text-decoration: none; display: inline-block; }
+    .btn-primary { background: #0B3049; } .btn-primary:hover { background: #1a4a6a; }
+    .btn-success { background: #0E6E76; } .btn-success:hover { background: #0a555c; }
+    .btn-danger { background: #B33A3A; } .btn-danger:hover { background: #8f2e2e; }
+    .btn-warning { background: #C0793A; } .btn-warning:hover { background: #a6632b; }
+    .btn-outline { background: transparent; border: 2px solid #DADCD3; color: #142B33; } .btn-outline:hover { background: #f0f2f5; }
+    .btn-copper { background: #C0793A; color: #fff; } .btn-copper:hover { background: #a6632b; }
+    .hidden { display: none !important; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .producto-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9f8; border: 1px solid #DADCD3; border-radius: 8px; padding: 15px; margin-bottom: 10px; transition: all 0.2s; }
+    .producto-item:hover { background: #f0f2f5; border-color: #0E6E76; }
+    .producto-info { flex: 1; }
+    .producto-info h3 { margin-bottom: 4px; color: #0B3049; }
+    .producto-info p { color: #5C6B70; font-size: 0.9rem; margin: 2px 0; }
+    .producto-actions { display: flex; gap: 8px; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: #fff; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { color: #0B3049; }
+    .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #999; } .modal-close:hover { color: #333; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 4px; color: #142B33; font-size: 0.9rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #DADCD3; border-radius: 6px; font-size: 14px; }
+    .form-group textarea { height: 80px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 20px; } .form-actions .btn { flex: 1; }
+    .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none; }
+    .alert-success { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-error { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .alert-info { display: block; background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
+    .loading { text-align: center; padding: 40px; color: #8A968F; }
+    .admin-top-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .json-box { background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 13px; max-height: 400px; overflow: auto; white-space: pre-wrap; word-break: break-all; margin-top: 10px; border: 1px solid #333; }
+    .json-box-label { font-weight: 600; color: #0B3049; margin-top: 16px; margin-bottom: 6px; display: block; }
+    .copy-btn { background: #0E6E76; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; margin-top: 8px; }
+    .copy-btn:hover { background: #0a555c; }
+    .copied-msg { color: #0E6E76; font-size: 13px; margin-left: 10px; display: none; }
+    .copied-msg.show { display: inline; }
+    .instrucciones { background: #f8f9fa; border-left: 4px solid #C0793A; padding: 15px 18px; margin: 16px 0; border-radius: 4px; }
+    .instrucciones strong { color: #0B3049; }
+    .instrucciones a { color: #0E6E76; font-weight: 600; }
+    .pasos { margin: 8px 0 0 20px; line-height: 1.8; }
     @media (max-width: 768px) {
-      .producto-item {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .producto-actions {
-        margin-top: 10px;
-        justify-content: flex-end;
-      }
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      .admin-top-links {
-        flex-direction: column;
-        align-items: stretch;
-      }
+      .producto-item { flex-direction: column; align-items: stretch; }
+      .producto-actions { margin-top: 10px; justify-content: flex-end; }
+      .form-row { grid-template-columns: 1fr; }
+      .admin-top-links { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -358,7 +94,7 @@
     <div class="toolbar">
       <button class="btn btn-success" onclick="abrirModalAgregar()">➕ Agregar Producto</button>
       <button class="btn btn-primary" onclick="cargarProductos()">🔄 Recargar</button>
-      <button class="btn btn-copper" onclick="mostrarJSON()">📋 Ver JSON para guardar</button>
+      <button class="btn btn-copper" onclick="mostrarJSON()">📋 Guardar cambios en GitHub</button>
     </div>
 
     <div id="productos-container">
@@ -367,13 +103,21 @@
 
     <!-- Sección para mostrar el JSON -->
     <div id="json-section" style="display:none; margin-top:30px; border-top:2px solid #DADCD3; padding-top:20px;">
-      <h3 style="color:#0B3049;">📋 Copia este JSON y pégalo en GitHub</h3>
-      <p style="color:#5C6B70; font-size:14px; margin-bottom:10px;">
-        1. Ve a <a href="https://github.com/mxmedifix/Medifix/blob/main/products.json" target="_blank" style="color:#0E6E76; font-weight:600;">products.json en GitHub</a><br>
-        2. Haz clic en el lápiz (✏️) para editar<br>
-        3. Borra TODO el contenido y pega este JSON<br>
-        4. Haz clic en "Commit changes" para guardar
-      </p>
+      <h3 style="color:#0B3049;">📋 Guarda tus cambios en GitHub</h3>
+      
+      <div class="instrucciones">
+        <strong>📌 Pasos para guardar los cambios:</strong>
+        <ol class="pasos">
+          <li>Haz clic en el botón <strong>"Copiar JSON"</strong> abajo</li>
+          <li>Abre <a href="https://github.com/mxmedifix/Medifix/blob/main/products.json" target="_blank">products.json en GitHub</a></li>
+          <li>Haz clic en el lápiz <strong>✏️ (Editar)</strong></li>
+          <li><strong>Borra TODO</strong> el contenido del archivo</li>
+          <li><strong>Pega</strong> el JSON que copiaste</li>
+          <li>Haz clic en <strong>"Commit changes"</strong> (abajo de la página)</li>
+          <li>Espera 2 minutos y recarga tu tienda</li>
+        </ol>
+      </div>
+
       <span class="json-box-label">📄 products.json (copia esto):</span>
       <div class="json-box" id="json-output"></div>
       <button class="copy-btn" onclick="copiarJSON()">📋 Copiar JSON</button>
@@ -446,7 +190,6 @@
 <script>
 const CONTRASENA = 'medifix2026';
 let productosData = null;
-let productosOriginales = null;
 
 function verificarPassword() {
   const input = document.getElementById('password-input');
@@ -488,7 +231,6 @@ function cargarProductos() {
     .then(data => {
       if (!data || !data.products) throw new Error('Estructura inválida');
       productosData = JSON.parse(JSON.stringify(data));
-      productosOriginales = JSON.parse(JSON.stringify(data));
       renderProductos(data);
       mostrarAlerta('✅ Productos cargados correctamente', 'success');
     })
@@ -616,7 +358,7 @@ function guardarProducto(event) {
   // Mostrar el botón para guardar en GitHub
   document.getElementById('json-section').style.display = 'block';
   actualizarJSON();
-  mostrarAlerta('📋 Los cambios están en memoria. Haz clic en "Ver JSON para guardar" y luego sube a GitHub.', 'info');
+  mostrarAlerta('📋 Los cambios están en memoria. Haz clic en "Guardar cambios en GitHub" y sigue las instrucciones.', 'info');
 }
 
 function eliminarProducto(id) {
@@ -630,7 +372,7 @@ function eliminarProducto(id) {
     
     document.getElementById('json-section').style.display = 'block';
     actualizarJSON();
-    mostrarAlerta('📋 Los cambios están en memoria. Haz clic en "Ver JSON para guardar" y luego sube a GitHub.', 'info');
+    mostrarAlerta('📋 Los cambios están en memoria. Haz clic en "Guardar cambios en GitHub" y sigue las instrucciones.', 'info');
   } else {
     mostrarAlerta('Error: Producto no encontrado', 'error');
   }
@@ -644,7 +386,7 @@ function mostrarAlerta(mensaje, tipo) {
   const alert = document.getElementById('alert');
   alert.textContent = mensaje;
   alert.className = 'alert alert-' + tipo;
-  setTimeout(() => { alert.className = 'alert'; }, 5000);
+  setTimeout(() => { alert.className = 'alert'; }, 6000);
 }
 
 function actualizarJSON() {
@@ -667,29 +409,40 @@ function ocultarJSON() {
 
 function copiarJSON() {
   const json = document.getElementById('json-output').textContent;
-  navigator.clipboard.writeText(json).then(() => {
-    const msg = document.getElementById('copied-msg');
-    msg.classList.add('show');
-    setTimeout(() => { msg.classList.remove('show'); }, 3000);
-  }).catch(() => {
-    // Fallback para navegadores sin clipboard
-    const textarea = document.createElement('textarea');
-    textarea.value = json;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    const msg = document.getElementById('copied-msg');
-    msg.classList.add('show');
-    setTimeout(() => { msg.classList.remove('show'); }, 3000);
-  });
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(json).then(() => {
+      mostrarCopiado();
+    }).catch(() => {
+      copiarFallback(json);
+    });
+  } else {
+    copiarFallback(json);
+  }
+}
+
+function copiarFallback(texto) {
+  const textarea = document.createElement('textarea');
+  textarea.value = texto;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+  mostrarCopiado();
+}
+
+function mostrarCopiado() {
+  const msg = document.getElementById('copied-msg');
+  msg.classList.add('show');
+  setTimeout(() => { msg.classList.remove('show'); }, 3000);
 }
 
 document.getElementById('modal').addEventListener('click', function(e) {
   if (e.target === this) cerrarModal();
 });
 
-// Tecla ESC para cerrar modal
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') cerrarModal();
 });
