@@ -32,7 +32,7 @@
       "categories": ["diagnostico", "general"],
       "price": "$15,000",
       "desc": "Monitor multiparamétrico con pantalla a color y alarmas configurables.",
-      "img": "https://placehold.co/600x600/f5f6f5/0B3049?text=Monitor"
+      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=Monitor"
     },
     {
       "id": "p4",
@@ -40,7 +40,7 @@
       "categories": ["cardiologia", "diagnostico"],
       "price": "$22,000",
       "desc": "Electrocardiógrafo digital con interpretación automática.",
-      "img": "https://placehold.co/600x600/f5f6f5/0B3049?text=ECG"
+      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=ECG"
     },
     {
       "id": "p5",
@@ -48,7 +48,7 @@
       "categories": ["cirugia"],
       "price": "$8,500",
       "desc": "Autoclave para esterilización de instrumental quirúrgico.",
-      "img": "https://placehold.co/600x600/f5f6f5/0B3049?text=Autoclave"
+      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=Autoclave"
     },
     {
       "id": "p6",
@@ -56,7 +56,7 @@
       "categories": ["general", "fisioterapia"],
       "price": "$4,200",
       "desc": "Camilla hidráulica con ajuste de altura y respaldo.",
-      "img": "https://placehold.co/600x600/f5f6f5/0B3049?text=Camilla"
+      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=Camilla"
     }
   ]
 }
