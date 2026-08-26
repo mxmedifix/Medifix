@@ -1,62 +1,59 @@
 {
   "categories": [
-    { "id": "general", "label": "Medicina General" },
-    { "id": "cardiologia", "label": "Cardiología" },
-    { "id": "ginecologia", "label": "Ginecología y Obstetricia" },
-    { "id": "pediatria", "label": "Pediatría" },
-    { "id": "fisioterapia", "label": "Fisioterapia y Rehabilitación" },
-    { "id": "cirugia", "label": "Cirugía y Esterilización" },
-    { "id": "diagnostico", "label": "Diagnóstico por Imagen" },
-    { "id": "Laboratorio", "label": "Laboratorio" }
+    {
+      "id": "general",
+      "label": "Medicina General"
+    },
+    {
+      "id": "cardiologia",
+      "label": "Cardiología"
+    },
+    {
+      "id": "ginecologia",
+      "label": "Ginecología y Obstetricia"
+    },
+    {
+      "id": "pediatria",
+      "label": "Pediatría"
+    },
+    {
+      "id": "fisioterapia",
+      "label": "Fisioterapia y Rehabilitación"
+    },
+    {
+      "id": "cirugia",
+      "label": "Cirugía y Esterilización"
+    },
+    {
+      "id": "diagnostico",
+      "label": "Diagnóstico por Imagen"
+    },
+    {
+      "id": "Laboratorio",
+      "label": "Laboratorio"
+    }
   ],
   "products": [
     {
       "id": "p1",
       "name": "CPAP Yuwell YH-550",
-      "categories": ["general"],
+      "categories": [
+        "general"
+      ],
       "price": "$7,000",
       "desc": "Equipo de presión positiva continua para apnea del sueño, con humidificador.",
       "img": "CPAP Yuwell.JPG"
     },
     {
-      "id": "p2",
-      "name": "Dermabond",
-      "categories": ["cirugia"],
-      "price": "$1,200",
-      "desc": "Adhesivo tisular para cierre de heridas, equivalente a sutura.",
-      "img": "DERMABOND.JPG"
-    },
-    {
-      "id": "p3",
-      "name": "Monitor de Signos Vitales",
-      "categories": ["diagnostico", "general"],
-      "price": "$15,000",
-      "desc": "Monitor multiparamétrico con pantalla a color y alarmas configurables.",
-      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=Monitor"
-    },
-    {
-      "id": "p4",
-      "name": "Electrocardiógrafo 12 derivaciones",
-      "categories": ["cardiologia", "diagnostico"],
-      "price": "$22,000",
-      "desc": "Electrocardiógrafo digital con interpretación automática.",
-      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=ECG"
-    },
-    {
-      "id": "p5",
-      "name": "Autoclave de mesa",
-      "categories": ["cirugia"],
-      "price": "$8,500",
-      "desc": "Autoclave para esterilización de instrumental quirúrgico.",
-      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=Autoclave"
-    },
-    {
-      "id": "p6",
-      "name": "Camilla de exploración",
-      "categories": ["general", "fisioterapia"],
-      "price": "$4,200",
-      "desc": "Camilla hidráulica con ajuste de altura y respaldo.",
-      "img": "https://via.placeholder.com/600x600/0B3049/FFFFFF?text=Camilla"
+      "id": "p1787729933114",
+      "name": "MICROSCOPIO BINOCULAR NIKON ECLIPSE EI",
+      "categories": [
+        "general"
+      ],
+      "price": "COTIZAR",
+      "desc": "CON OBJETIVOS 4, 10, 40 Y 100 X CON CABLE DE CORRIENTE, PAPEL PARA LIMPIEZA OPTICA, ACEITE DE INMERSION Y FUNDA PARA POLVO",
+      "img": "https://via.placeholder.com/600x600/DADCD3/0B3049?text=Medifix",
+      "stock": 100
     }
   ]
 }
