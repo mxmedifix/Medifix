@@ -258,14 +258,7 @@
 </footer>
 
 <script>
-// ============================================================
-// CONFIGURACIÓN
-// ============================================================
 const WHATSAPP_NUMBER = "528718336666";
-
-// ============================================================
-// CARGAR Y RENDERIZAR PRODUCTOS
-// ============================================================
 const productGrid = document.getElementById('productGrid');
 const filterRow = document.getElementById('filterRow');
 
@@ -283,13 +276,11 @@ function renderProducts(data) {
     return;
   }
 
-  // Generar filtros
   filterRow.innerHTML = `<button class="filter-chip active" data-filter="todos">Todos</button>`;
   categories.forEach(c => {
     filterRow.innerHTML += `<button class="filter-chip" data-filter="${c.id}">${c.label}</button>`;
   });
 
-  // Generar productos
   productGrid.innerHTML = products.map(p => {
     const catLabels = p.categories && p.categories.length > 0
       ? p.categories.map(id => {
@@ -315,23 +306,17 @@ function renderProducts(data) {
     `;
   }).join('');
 
-  // Inicializar filtros
   initFilters();
 }
 
-// ============================================================
-// FILTROS
-// ============================================================
 function initFilters() {
   const chips = filterRow.querySelectorAll('.filter-chip');
   chips.forEach(chip => {
     chip.addEventListener('click', function() {
       chips.forEach(c => c.classList.remove('active'));
       this.classList.add('active');
-
       const filter = this.getAttribute('data-filter');
       const cards = productGrid.querySelectorAll('.product-card');
-
       cards.forEach(card => {
         const categories = card.getAttribute('data-category') || '';
         const show = filter === 'todos' || categories.split(' ').includes(filter);
@@ -341,9 +326,6 @@ function initFilters() {
   });
 }
 
-// ============================================================
-// COTIZAR POR WHATSAPP
-// ============================================================
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.product-cta');
   if (btn) {
@@ -354,9 +336,6 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ============================================================
-// CARGA INICIAL
-// ============================================================
 fetch('products.json')
   .then(response => {
     if (!response.ok) throw new Error('No se pudo cargar products.json (HTTP ' + response.status + ')');
